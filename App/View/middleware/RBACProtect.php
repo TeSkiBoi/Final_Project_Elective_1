@@ -12,18 +12,16 @@ require_once __DIR__ . '/../../Config/Auth.php';
  */
 $pagePermissions = [
     // Admin-only pages (role_id 1)
-    'department.php' => [1],
+    
     'role.php' => [1],
     'user.php' => [1],
-    'courses.php' => [1],
-    'faculty.php' => [1],
     'contact.php' => [2],
-    'patient.php' => [1,2],
+    
     
     
     // Admin and Staff pages (role_id 1, 2)
-    'students.php' => [1, 2],
-    'enrollment.php' => [1, 2],
+    'certicate_generator' => [1,2],
+    'household.php' => [1,2],
     
     // Everyone (all authenticated users)
     'index.php' => [1, 2, 3],

@@ -2,7 +2,7 @@
     <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
         <div class="sb-sidenav-menu">
             <div class="nav">
-                <div class="sb-sidenav-menu-heading">Main</div>
+                <div class="sb-sidenav-menu-heading">Main/Records</div>
                 <a class="nav-link" href="index.php">
                     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Dashboard
@@ -13,13 +13,13 @@
                         <div class="sb-nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
                         Residents
                     </a>-->
-                    <a class="nav-link" href="certificate_generator.php">
-                        <div class="sb-nav-link-icon"><i class="fas fa-file-signature"></i></div>
-                        Certificate Generator
-                    </a>
                     <a class="nav-link" href="household.php">
                         <div class="sb-nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
                         Households
+                    </a>
+                    <a class="nav-link" href="residents.php">
+                        <div class="sb-nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
+                        Resident
                     </a>
                     <!--<a class="nav-link" href="patient.php">
                         <div class="sb-nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
@@ -37,7 +37,20 @@
                         <div class="sb-nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
                         Children
                     </a>-->
-                    <div class="sb-sidenav-menu-heading">Records</div>
+                    <div class="sb-sidenav-menu-heading">Features</div>
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseFeatures" aria-expanded="false" aria-controls="collapseFeatures">
+                        <div class="sb-nav-link-icon"><i class="fas fa-th-large"></i></div>
+                        Features
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-chevron-down"></i></div>
+                    </a>
+                    <div class="collapse" id="collapseFeatures" data-bs-parent="#sidenavAccordion">
+                        <nav class="sb-sidenav-menu-nested nav">
+                            <a class="nav-link" href="certificate_generator.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-file-signature"></i></div>
+                                Certificate Generator
+                            </a>
+                        </nav>
+                    </div>
                 <?php endif; ?>
 
                 <?php if($roleId == 2): ?>
@@ -50,25 +63,13 @@
 
                 <?php if($roleId == 1): ?>
                     <div class="sb-sidenav-menu-heading">Maintenance</div>
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseMaintenance" aria-expanded="false" aria-controls="collapseMaintenance">
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseMaintenanceAdmin" aria-expanded="false" aria-controls="collapseMaintenanceAdmin">
                         <div class="sb-nav-link-icon"><i class="fas fa-wrench"></i></div>
                         Maintenance
                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
-                    <div class="collapse" id="collapseMaintenance" data-bs-parent="#sidenavAccordion">
+                    <div class="collapse" id="collapseMaintenanceAdmin" data-bs-parent="#sidenavAccordion">
                         <nav class="sb-sidenav-menu-nested nav">
-                            <!--<a class="nav-link" href="faculty.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
-                                faculty
-                            </a>
-                            <a class="nav-link" href="courses.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
-                                Courses
-                            </a>
-                            <a class="nav-link" href="department.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
-                                Department
-                            </a>-->
                             <a class="nav-link" href="user.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
                                 User
@@ -77,7 +78,6 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
                                 Role
                             </a>
-
                         </nav>
                     </div>
                 <?php endif; ?>
