@@ -237,7 +237,7 @@
                 <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" style="width: 12px; height: 12px; border-radius: 50%; margin: 0 6px;"></button>
             </div>
             <div class="carousel-inner">
-                <div class="carousel-item active" style="background-image: url('assets/img/landing-bg-1.jpg'); background-position: center 30%;">
+                <div class="carousel-item active" style="background-image: url('assets/img/biga1.jpg'); background-position: center 30%;">
                     <div class="carousel-content d-flex align-items-center h-100">
                         <div class="container text-center">
                             <h1 class="display-2 fw-bold mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Welcome to BIGA MANAGEMENT SYSTEM</h1>
@@ -246,7 +246,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="carousel-item" style="background-image: url('assets/img/landing-bg-2.jpg'); background-position: center center;">
+                <div class="carousel-item" style="background-image: url('assets/img/bigamap.jpg'); background-position: center center;">
                     <div class="carousel-content d-flex align-items-center h-100">
                         <div class="container text-center">
                             <h1 class="display-2 fw-bold mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Innovate. Inspire. Impact.</h1>
@@ -255,7 +255,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="carousel-item" style="background-image: url('assets/img/landing-bg-3.jpg'); background-position: center 40%;">
+                <div class="carousel-item" style="background-image: url('assets/img/brgyofice.jpg'); background-position: center 40%;">
                     <div class="carousel-content d-flex align-items-center h-100">
                         <div class="container text-center">
                             <h1 class="display-2 fw-bold mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Shape Your Future</h1>
@@ -345,7 +345,7 @@
     <section id="about" class="py-5 bg-light">
         <div class="container">
             <div class="text-center mb-5">
-                <h1 class="text-center fw-bold mb-5">About MarSU</h1>
+                <h1 class="text-center fw-bold mb-5">About BMS</h1>
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
                         <p class="lead text-muted">Marinduque State University is committed to providing quality education and fostering innovation in the heart of Marinduque.</p>
@@ -356,7 +356,7 @@
             <div class="row g-4 align-items-center">
                 <div class="col-lg-6">
                     <div class="position-relative rounded-4 overflow-hidden">
-                        <img src="assets/img/landing-bg-3.jpg" alt="Campus Life" class="img-fluid rounded-4 shadow-lg" style="width: 100%; height: 400px; object-fit: cover;">
+                        <img src="assets/img/brgy2.jpg" alt="Campus Life" class="img-fluid rounded-4 shadow-lg" style="width: 100%; height: 400px; object-fit: cover;">
                         <div class="position-absolute bottom-0 start-0 w-100 p-4" style="background: linear-gradient(transparent, rgba(0,0,0,0.8));">
                             <h3 class="text-white mb-2">Our Mission</h3>
                             <p class="text-white mb-0">Developing globally competitive graduates while preserving our cultural heritage.</p>

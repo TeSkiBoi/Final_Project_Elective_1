@@ -77,7 +77,7 @@
                                                     <td><?php echo htmlspecialchars($user['email']); ?></td>
                                                     <td><?php echo htmlspecialchars($user['role_name']); ?></td>
                                                     <td>
-                                                        <span class="badge <?php echo $user['status'] === 'active' ? 'bg-success' : 'bg-danger'; ?>">
+                                                        <span class="badge <?php echo trim(strtolower($user['status'])) === 'active' ? 'bg-success' : 'bg-danger'; ?>">
                                                             <?php echo htmlspecialchars($user['status']); ?>
                                                         </span>
                                                     </td>

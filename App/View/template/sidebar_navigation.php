@@ -13,14 +13,37 @@
                         <div class="sb-nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
                         Residents
                     </a>-->
-                    <a class="nav-link" href="household.php">
-                        <div class="sb-nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
-                        Households
+                    <div class="sb-sidenav-menu-heading">Records</div>
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseFeatures2" aria-expanded="false" aria-controls="collapseFeatures">
+                        <div class="sb-nav-link-icon"><i class="fas fa-th-large"></i></div>
+                        Records
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
-                    <a class="nav-link" href="residents.php">
-                        <div class="sb-nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
-                        Resident
-                    </a>
+                    <div class="collapse" id="collapseFeatures2" data-bs-parent="#sidenavAccordion">
+                        <nav class="sb-sidenav-menu-nested nav">
+                            <a class="nav-link" href="household.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-file-signature"></i></div>
+                                Household
+                            </a>
+                            <a class="nav-link" href="Resident.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
+                                    Resident
+                            </a>
+                            <a class="nav-link" href="children.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
+                                    Children
+                            </a>
+                            <a class="nav-link" href="senior.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-user-clock"></i></div>
+                                    Seniors
+                            </a>
+                            <a class="nav-link" href="adult.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                                    Adult
+                            </a>
+                        </nav>
+                    </div>
+                    
                     <!--<a class="nav-link" href="patient.php">
                         <div class="sb-nav-link-icon"><i class="fas fa-graduation-cap"></i></div>
                         Seniors
@@ -49,6 +72,18 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-file-signature"></i></div>
                                 Certificate Generator
                             </a>
+                            <a class="nav-link" href="financial.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-wallet"></i></div>
+                                Financial Management
+                            </a>
+                            <a class="nav-link" href="projects.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-project-diagram"></i></div>
+                                Barangay Projects
+                            </a>
+                            <a class="nav-link" href="blotter.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-clipboard-list"></i></div>
+                                Blotter & Incident Recording
+                            </a>
                         </nav>
                     </div>
                 <?php endif; ?>
@@ -75,8 +110,12 @@
                                 User
                             </a>
                             <a class="nav-link" href="role.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
+                                <div class="sb-nav-link-icon"><i class="fas fa-user-tag"></i></div>
                                 Role
+                            </a>
+                            <a class="nav-link" href="barangay_officials.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-sitemap"></i></div>
+                                Barangay Official Org Chart
                             </a>
                         </nav>
                     </div>

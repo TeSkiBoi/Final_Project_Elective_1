@@ -24,7 +24,14 @@ class Database {
 
         // Check connection
         if ($this->connection->connect_error) {
-            die('Connection Failed: ' . $this->connection->connect_error);
+            // Return JSON error instead of HTML
+            if (headers_sent()) {
+                throw new Exception('Database connection failed: ' . $this->connection->connect_error);
+            }
+            http_response_code(500);
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Database connection failed']);
+            exit;
         }
 
         return $this->connection;
@@ -46,4 +53,3 @@ class Database {
         }
     }
 }
-?>

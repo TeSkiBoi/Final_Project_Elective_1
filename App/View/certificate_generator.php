@@ -84,7 +84,7 @@
                                     <div class="card-header">Certificate Preview</div>
                                     <div class="card-body" id="printableArea">
                                         <!-- print-area: only this will be visible when printing -->
-                                        <div class="print-area">
+                                        <div class="print-area" id="certificate-area">
                                             <div id="certificate" class="certificate-wrapper">
                                                 <div class="certificate-header">
                                                     <img src="../../assets/img/BIGA-LOGO.png" alt="Barangay Logo" class="barangay-logo" onerror="this.style.display='none'">
@@ -145,16 +145,37 @@
             .certificate-footer { margin-top: 28px; display:flex; justify-content:space-between; align-items:center; }
             .official-sign { text-align:center; width:40%; }
 
-            /* Print styles: hide everything except the print-area and ensure no extra blank pages */
+            /* Print styles */
             @media print {
-                html, body { height: auto; margin: 0; padding: 0; }
-                body * { display: none !important; }
-                #printableArea, #printableArea * { display: block !important; visibility: visible !important; }
-                #printableArea { position: relative !important; top: 0 !important; left: 0 !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
-                .print-area { width: 100% !important; max-width: 190mm; margin: 0 auto !important; padding: 0 !important; }
-                .certificate-wrapper { border: none; padding: 12px !important; }
-                .certificate-wrapper, .print-area { page-break-inside: avoid !important; }
-                .no-print { display: none !important; }
+                @page { size: A4; margin: 20mm 15mm 15mm 15mm; }
+                html, body { height: auto; margin: 0; padding: 0; background: white; }
+
+                body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+                body * { visibility: hidden !important; }
+
+                #certificate-area, #certificate-area * { visibility: visible !important; }
+
+                #certificate-area {
+                    position: absolute !important;
+                    top: 20mm !important;
+                    left: 15mm !important;
+                    right: 15mm !important;
+                    width: calc(210mm - 30mm) !important;
+                    margin: 0 auto !important;
+                    transform: translateY(0) !important;
+                    page-break-inside: avoid !important;
+                }
+
+                .certificate-wrapper {
+                    width: 100% !important;
+                    max-width: 800px !important;
+                    margin: 0 auto !important;
+                    padding-top: 10px !important;
+                    page-break-inside: avoid !important;
+                }
+
+                .no-print, header, footer, nav, .sb-sidenav, .sb-topnav, .breadcrumb, .card-header .btn { display: none !important; }
             }
         </style>
 
@@ -199,7 +220,75 @@
 
             document.getElementById('printBtn').addEventListener('click', function() {
                 generateCertificate();
-                window.print();
+
+                // Build minimal print CSS to ensure consistent A4 output in the print window
+                const printCss = `
+                    @page { size: A4; margin: 20mm 15mm 15mm 15mm; }
+                    html, body { height: auto; margin: 0; padding: 0; background: white; }
+                    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+                    /* Hide everything by default and reveal only the certificate-area */
+                    body * { visibility: hidden !important; }
+                    #certificate-area, #certificate-area * { visibility: visible !important; }
+
+                    #certificate-area {
+                        position: absolute !important;
+                        top: 20mm !important;
+                        left: 15mm !important;
+                        right: 15mm !important;
+                        width: calc(210mm - 30mm) !important;
+                        margin: 0 auto !important;
+                        transform: none !important;
+                        page-break-inside: avoid !important;
+                    }
+
+                    .certificate-wrapper {
+                        width: 100% !important;
+                        max-width: 800px !important;
+                        margin: 0 auto !important;
+                        padding-top: 10px !important;
+                        page-break-inside: avoid !important;
+                    }
+
+                    .certificate-header { display:flex; align-items:center; gap:16px; margin-bottom: 12px; }
+                    .barangay-logo { width: 80px; height: 80px; object-fit: contain; }
+                    .certificate-title { text-align: center; width:100%; }
+                    .certificate-body { margin-top: 18px; font-size: 1.05rem; line-height: 1.6; }
+                    .certificate-footer { margin-top: 28px; display:flex; justify-content:space-between; align-items:center; }
+                    .official-sign { text-align:center; width:40%; }
+
+                    /* Ensure no page-breaks inside these regions */
+                    .certificate-wrapper, .print-area { page-break-inside: avoid !important; }
+                `;
+
+                const printable = document.getElementById('printableArea');
+                if (!printable) { alert('Printable area not found'); return; }
+
+                const newWin = window.open('', '_blank');
+                if (!newWin) { alert('Popup blocked. Allow popups for this site to print.'); return; }
+
+                const doc = newWin.document;
+                doc.open();
+                doc.write('<!doctype html><html><head><meta charset="utf-8"><title>Print Certificate</title>');
+                doc.write('<style>' + printCss + '</style>');
+                doc.write('</head><body>');
+
+                // Clone printable content to avoid removing it from the current DOM
+                const clone = printable.cloneNode(true);
+                // Remove interactive elements from clone
+                clone.querySelectorAll && clone.querySelectorAll('.no-print, button').forEach(function(el){ el.remove(); });
+
+                // Ensure image sources are absolute or relative to site root if needed. If the image fails
+                // to appear in the printed window, consider replacing its src with a root-relative path.
+                doc.write(clone.innerHTML);
+                doc.write('</body></html>');
+                doc.close();
+
+                // Give the new window time to render its content then call print
+                newWin.focus();
+                setTimeout(function(){
+                    try { newWin.print(); } catch (e) { console.error('Print failed', e); }
+                }, 300);
             });
 
             document.getElementById('certForm').addEventListener('submit', function(e){ e.preventDefault(); generateCertificate(); });

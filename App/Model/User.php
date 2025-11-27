@@ -101,7 +101,7 @@ class User {
         $query = "SELECT u.user_id, u.fullname, u.username, u.email, u.role_id, r.role_name, u.status 
                   FROM " . $this->table . " u 
                   LEFT JOIN roles r ON u.role_id = r.role_id 
-                  ORDER BY u.fullname ASC";
+                  ORDER BY u.user_id ASC";
         $result = $this->connection->query($query);
 
         if (!$result) {

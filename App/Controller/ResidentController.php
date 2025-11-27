@@ -1,39 +1,29 @@
 <?php
 /**
- * Household Controller
- * API endpoints for household CRUD operations
+ * Resident Controller
+ * API endpoints for resident CRUD
  */
 
 header('Content-Type: application/json');
 require_once __DIR__ . '/../Config/Auth.php';
-require_once __DIR__ . '/../Model/Household.php';
+require_once __DIR__ . '/../Model/Resident.php';
 
-// require authenticated user
+// Authentication
 if (!isAuthenticated()) {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
 
-$householdModel = new Household();
+$residentModel = new Resident();
 $action = isset($_GET['action']) ? $_GET['action'] : null;
 
 switch ($action) {
-    case 'create':
-        handleCreate();
-        break;
-    case 'update':
-        handleUpdate();
-        break;
-    case 'delete':
-        handleDelete();
-        break;
-    case 'getAll':
-        handleGetAll();
-        break;
-    case 'getById':
-        handleGetById();
-        break;
+    case 'create': handleCreate(); break;
+    case 'update': handleUpdate(); break;
+    case 'delete': handleDelete(); break;
+    case 'getAll': handleGetAll(); break;
+    case 'getById': handleGetById(); break;
     default:
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Invalid action']);
@@ -41,8 +31,7 @@ switch ($action) {
 }
 
 function handleCreate() {
-    global $householdModel;
-
+    global $residentModel;
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(405);
         echo json_encode(['success' => false, 'message' => 'Method not allowed']);
@@ -50,28 +39,19 @@ function handleCreate() {
     }
 
     $data = json_decode(file_get_contents('php://input'), true);
-
-    // Required fields: household_no, address
-    if (empty($data['household_no']) || empty($data['address'])) {
+    if (!$data) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Household No and Address are required']);
+        echo json_encode(['success' => false, 'message' => 'Invalid input']);
         return;
     }
 
-    $household_no = $data['household_no'];
-    $address = $data['address'];
-    $income = $data['income'] ?? 0.00;
-    $purok = $data['purok'] ?? '';
-    $head_resident_id = $data['head_resident_id'] ?? null;
-
-    $result = $householdModel->create($household_no, $address, $income, $purok, $head_resident_id);
+    $result = $residentModel->create($data);
     echo json_encode($result);
     exit;
 }
 
 function handleUpdate() {
-    global $householdModel;
-
+    global $residentModel;
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(405);
         echo json_encode(['success' => false, 'message' => 'Method not allowed']);
@@ -79,28 +59,20 @@ function handleUpdate() {
     }
 
     $data = json_decode(file_get_contents('php://input'), true);
-
-    if (empty($data['household_id'])) {
+    if (empty($data['id'])) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Household ID is required']);
+        echo json_encode(['success' => false, 'message' => 'Resident ID is required']);
         return;
     }
 
-    $household_id = $data['household_id'];
-    $household_no = $data['household_no'] ?? '';
-    $address = $data['address'] ?? '';
-    $income = $data['income'] ?? 0.00;
-    $purok = $data['purok'] ?? '';
-    $head_resident_id = $data['head_resident_id'] ?? null;
-
-    $result = $householdModel->update($household_id, $household_no, $address, $income, $purok, $head_resident_id);
+    $id = $data['id'];
+    $result = $residentModel->update($id, $data);
     echo json_encode($result);
     exit;
 }
 
 function handleDelete() {
-    global $householdModel;
-
+    global $residentModel;
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(405);
         echo json_encode(['success' => false, 'message' => 'Method not allowed']);
@@ -108,33 +80,32 @@ function handleDelete() {
     }
 
     $data = json_decode(file_get_contents('php://input'), true);
-    if (empty($data['household_id'])) {
+    if (empty($data['id'])) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Household ID is required']);
+        echo json_encode(['success' => false, 'message' => 'Resident ID is required']);
         return;
     }
 
-    $household_id = $data['household_id'];
-    $result = $householdModel->delete($household_id);
+    $id = $data['id'];
+    $result = $residentModel->delete($id);
     echo json_encode($result);
+    exit;
 }
 
 function handleGetAll() {
-    global $householdModel;
-
+    global $residentModel;
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
         http_response_code(405);
         echo json_encode(['success' => false, 'message' => 'Method not allowed']);
         return;
     }
 
-    $rows = $householdModel->getAll();
+    $rows = $residentModel->getAll();
     echo json_encode(['success' => true, 'data' => $rows]);
 }
 
 function handleGetById() {
-    global $householdModel;
-
+    global $residentModel;
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
         http_response_code(405);
         echo json_encode(['success' => false, 'message' => 'Method not allowed']);
@@ -143,17 +114,17 @@ function handleGetById() {
 
     if (empty($_GET['id'])) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Household ID is required']);
+        echo json_encode(['success' => false, 'message' => 'Resident ID is required']);
         return;
     }
 
-    $household_id = $_GET['id'];
-    $row = $householdModel->getById($household_id);
+    $id = $_GET['id'];
+    $row = $residentModel->getById($id);
     if ($row) {
         echo json_encode(['success' => true, 'data' => $row]);
     } else {
         http_response_code(404);
-        echo json_encode(['success' => false, 'message' => 'Household not found']);
+        echo json_encode(['success' => false, 'message' => 'Resident not found']);
     }
 }
 

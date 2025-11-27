@@ -1,23 +1,25 @@
 <?php
 /**
- * Household Controller
- * API endpoints for household CRUD operations
+ * Senior Controller
+ * Handles API endpoints for senior citizen CRUD operations
  */
 
 header('Content-Type: application/json');
 require_once __DIR__ . '/../Config/Auth.php';
-require_once __DIR__ . '/../Model/Household.php';
+require_once __DIR__ . '/../Model/Senior.php';
 
-// require authenticated user
+// Check if user is authenticated
 if (!isAuthenticated()) {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
 
-$householdModel = new Household();
+// Initialize Senior model
+$seniorModel = new Senior();
 $action = isset($_GET['action']) ? $_GET['action'] : null;
 
+// Handle different actions
 switch ($action) {
     case 'create':
         handleCreate();
@@ -40,121 +42,131 @@ switch ($action) {
         break;
 }
 
+/**
+ * Handle Create Senior
+ */
 function handleCreate() {
-    global $householdModel;
+    global $seniorModel;
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(405);
         echo json_encode(['success' => false, 'message' => 'Method not allowed']);
-        return;
+        exit;
     }
 
     $data = json_decode(file_get_contents('php://input'), true);
 
-    // Required fields: household_no, address
-    if (empty($data['household_no']) || empty($data['address'])) {
+    // Validate required fields
+    if (empty($data['firstname']) || empty($data['lastname']) || empty($data['birthdate']) || 
+        empty($data['gender']) || empty($data['age']) || empty($data['status'])) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Household No and Address are required']);
-        return;
+        echo json_encode(['success' => false, 'message' => 'All required fields must be provided']);
+        exit;
     }
 
-    $household_no = $data['household_no'];
-    $address = $data['address'];
-    $income = $data['income'] ?? 0.00;
-    $purok = $data['purok'] ?? '';
-    $head_resident_id = $data['head_resident_id'] ?? null;
-
-    $result = $householdModel->create($household_no, $address, $income, $purok, $head_resident_id);
+    $result = $seniorModel->create($data);
     echo json_encode($result);
     exit;
 }
 
+/**
+ * Handle Update Senior
+ */
 function handleUpdate() {
-    global $householdModel;
+    global $seniorModel;
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(405);
         echo json_encode(['success' => false, 'message' => 'Method not allowed']);
-        return;
+        exit;
     }
 
     $data = json_decode(file_get_contents('php://input'), true);
 
-    if (empty($data['household_id'])) {
+    // Validate required fields
+    if (empty($data['senior_id'])) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Household ID is required']);
-        return;
+        echo json_encode(['success' => false, 'message' => 'Senior ID is required']);
+        exit;
     }
 
-    $household_id = $data['household_id'];
-    $household_no = $data['household_no'] ?? '';
-    $address = $data['address'] ?? '';
-    $income = $data['income'] ?? 0.00;
-    $purok = $data['purok'] ?? '';
-    $head_resident_id = $data['head_resident_id'] ?? null;
-
-    $result = $householdModel->update($household_id, $household_no, $address, $income, $purok, $head_resident_id);
+    $senior_id = $data['senior_id'];
+    $result = $seniorModel->update($senior_id, $data);
     echo json_encode($result);
     exit;
 }
 
+/**
+ * Handle Delete Senior
+ */
 function handleDelete() {
-    global $householdModel;
+    global $seniorModel;
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         http_response_code(405);
         echo json_encode(['success' => false, 'message' => 'Method not allowed']);
-        return;
+        exit;
     }
 
     $data = json_decode(file_get_contents('php://input'), true);
-    if (empty($data['household_id'])) {
+
+    // Validate required fields
+    if (empty($data['senior_id'])) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Household ID is required']);
-        return;
+        echo json_encode(['success' => false, 'message' => 'Senior ID is required']);
+        exit;
     }
 
-    $household_id = $data['household_id'];
-    $result = $householdModel->delete($household_id);
+    $senior_id = $data['senior_id'];
+    $result = $seniorModel->delete($senior_id);
     echo json_encode($result);
+    exit;
 }
 
+/**
+ * Handle Get All Seniors
+ */
 function handleGetAll() {
-    global $householdModel;
+    global $seniorModel;
 
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
         http_response_code(405);
         echo json_encode(['success' => false, 'message' => 'Method not allowed']);
-        return;
+        exit;
     }
 
-    $rows = $householdModel->getAll();
-    echo json_encode(['success' => true, 'data' => $rows]);
+    $seniors = $seniorModel->getAll();
+    echo json_encode(['success' => true, 'data' => $seniors]);
+    exit;
 }
 
+/**
+ * Handle Get Senior By ID
+ */
 function handleGetById() {
-    global $householdModel;
+    global $seniorModel;
 
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
         http_response_code(405);
         echo json_encode(['success' => false, 'message' => 'Method not allowed']);
-        return;
+        exit;
     }
 
     if (empty($_GET['id'])) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Household ID is required']);
-        return;
+        echo json_encode(['success' => false, 'message' => 'Senior ID is required']);
+        exit;
     }
 
-    $household_id = $_GET['id'];
-    $row = $householdModel->getById($household_id);
-    if ($row) {
-        echo json_encode(['success' => true, 'data' => $row]);
-    } else {
+    $id = $_GET['id'];
+    $senior = $seniorModel->getById($id);
+    
+    if ($senior === null) {
         http_response_code(404);
-        echo json_encode(['success' => false, 'message' => 'Household not found']);
+        echo json_encode(['success' => false, 'message' => 'Senior citizen not found']);
+    } else {
+        echo json_encode(['success' => true, 'data' => $senior]);
     }
+    exit;
 }
-
 ?>

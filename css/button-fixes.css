@@ -1,0 +1,65 @@
+/* Global button fixes - ensures pointer cursor, gray hover/focus/active states,
+   smooth transitions, and a subtle accessible focus ring while removing
+   default outlines that cause visual issues. This file is loaded after
+   the main styles to ensure it overrides Bootstrap where needed. */
+
+/* Apply to button-like elements except when disabled */
+button:not(:disabled),
+.btn:not(:disabled),
+input[type="button"]:not(:disabled),
+input[type="submit"]:not(:disabled) {
+  cursor: pointer !important;
+  transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease, transform 100ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Hover and focus state: medium gray, white text */
+button:not(:disabled):hover,
+.btn:not(:disabled):hover,
+input[type="button"]:not(:disabled):hover,
+input[type="submit"]:not(:disabled):hover,
+button:not(:disabled):focus,
+.btn:not(:disabled):focus,
+input[type="button"]:not(:disabled):focus,
+input[type="submit"]:not(:disabled):focus {
+  background-color: #808080 !important;
+  color: #fff !important;
+  border-color: #808080 !important;
+  text-decoration: none !important;
+}
+
+/* Active / pressed state: slightly darker gray */
+button:not(:disabled):active,
+.btn:not(:disabled):active,
+.btn.active:not(:disabled) {
+  background-color: #666666 !important;
+  color: #fff !important;
+  border-color: #666666 !important;
+  transform: translateY(0.5px);
+}
+
+/* Remove default outline but provide a subtle box-shadow focus indicator for keyboard users */
+button:focus,
+.btn:focus,
+input[type="button"]:focus,
+input[type="submit"]:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(128,128,128,0.18) !important;
+}
+
+/* Ensure disabled buttons keep default disabled look and don't get pointer cursor */
+button[disabled],
+.btn.disabled,
+.btn:disabled,
+input[type="button"][disabled],
+input[type="submit"][disabled] {
+  cursor: default !important;
+  opacity: 0.65;
+  box-shadow: none !important;
+}
+
+/* Specificity helpers for Bootstrap variant classes if extra override is needed */
+.btn-primary:hover, .btn-primary:focus { background-color: #808080 !important; border-color: #808080 !important; color: #fff !important; }
+.btn-secondary:hover, .btn-secondary:focus { background-color: #808080 !important; border-color: #808080 !important; color: #fff !important; }
+.btn-danger:hover, .btn-danger:focus { background-color: #808080 !important; border-color: #808080 !important; color: #fff !important; }
+.btn-warning:hover, .btn-warning:focus { background-color: #808080 !important; border-color: #808080 !important; color: #fff !important; }

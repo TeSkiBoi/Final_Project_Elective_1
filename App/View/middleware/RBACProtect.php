@@ -22,6 +22,9 @@ $pagePermissions = [
     // Admin and Staff pages (role_id 1, 2)
     'certicate_generator' => [1,2],
     'household.php' => [1,2],
+    'Resident.php'=> [1,2],
+    'children.php'=> [1,2],
+    'financial.php'=> [1,2],
     
     // Everyone (all authenticated users)
     'index.php' => [1, 2, 3],
