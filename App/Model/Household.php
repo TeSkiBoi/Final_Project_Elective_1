@@ -85,6 +85,8 @@ class Household {
                 ];
             }
 
+            // Bind parameters: s=string, i=integer, s=string, s=string, d=double
+            // household_id(s), family_no(i), full_name(s), address(s), income(d)
             $query = "INSERT INTO " . $this->table . " (household_id, family_no, full_name, address, income) VALUES (?, ?, ?, ?, ?)";
             $stmt = $this->connection->prepare($query);
             
@@ -145,6 +147,8 @@ class Household {
                 ];
             }
 
+            // Bind parameters: i=integer, s=string, s=string, d=double, s=string
+            // family_no(i), full_name(s), address(s), income(d), household_id(s)
             $query = "UPDATE " . $this->table . " SET family_no = ?, full_name = ?, address = ?, income = ? WHERE household_id = ?";
             $stmt = $this->connection->prepare($query);
             
