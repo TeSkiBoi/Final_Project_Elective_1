@@ -53,11 +53,10 @@
                                     <thead>
                                         <tr>
                                             <th>Household ID</th>
-                                            <th>Household No</th>
+                                            <th>Family No</th>
+                                            <th>Full Name</th>
                                             <th>Address</th>
                                             <th>Income</th>
-                                            <th>Purok</th>
-                                            <th>Head Resident ID</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -66,11 +65,10 @@
                                             <?php foreach ($households as $household): ?>
                                                 <tr>
                                                     <td><?php echo htmlspecialchars($household['household_id']); ?></td>
-                                                    <td><?php echo htmlspecialchars($household['household_no']); ?></td>
+                                                    <td><?php echo htmlspecialchars($household['family_no']); ?></td>
+                                                    <td><?php echo htmlspecialchars($household['full_name']); ?></td>
                                                     <td><?php echo htmlspecialchars($household['address']); ?></td>
                                                     <td><?php echo number_format($household['income'] ?? 0, 2); ?></td>
-                                                    <td><?php echo htmlspecialchars($household['purok'] ?? ''); ?></td>
-                                                    <td><?php echo htmlspecialchars($household['head_resident_id'] ?? 'N/A'); ?></td>
                                                     <td>
                                                         <button class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#updateHouseholdModal">
                                                             <i class="fas fa-edit"></i> Edit
@@ -83,7 +81,7 @@
                                             <?php endforeach; ?>
                                         <?php else: ?>
                                             <tr>
-                                                <td colspan="7" class="text-center text-muted py-4">
+                                                <td colspan="6" class="text-center text-muted py-4">
                                                     <i class="fas fa-inbox me-2"></i>No households found. Click "Add New Household" to create one.
                                                 </td>
                                             </tr>
@@ -110,25 +108,24 @@
                     <form id="createHouseholdForm">
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label for="household_no" class="form-label">Household No <span class="text-danger">*</span></label>
-                                <input type="text" id="household_no" name="household_no" class="form-control" required placeholder="e.g., HH-2024-001">
+                                <label for="household_id" class="form-label">Household ID <span class="text-danger">*</span></label>
+                                <input type="text" id="household_id" name="household_id" class="form-control" required placeholder="e.g., HH-2024-001" maxlength="20">
+                            </div>
+                            <div class="mb-3">
+                                <label for="family_no" class="form-label">Family No <span class="text-danger">*</span></label>
+                                <input type="number" id="family_no" name="family_no" class="form-control" required placeholder="Enter family number" min="1">
+                            </div>
+                            <div class="mb-3">
+                                <label for="full_name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                                <input type="text" id="full_name" name="full_name" class="form-control" required placeholder="Enter full name" maxlength="150">
                             </div>
                             <div class="mb-3">
                                 <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
-                                <input type="text" id="address" name="address" class="form-control" required placeholder="Enter complete address">
+                                <input type="text" id="address" name="address" class="form-control" required placeholder="Enter complete address" maxlength="255">
                             </div>
                             <div class="mb-3">
                                 <label for="income" class="form-label">Household Income</label>
                                 <input type="number" id="income" name="income" class="form-control" step="0.01" min="0" placeholder="0.00">
-                            </div>
-                            <div class="mb-3">
-                                <label for="purok" class="form-label">Purok</label>
-                                <input type="text" id="purok" name="purok" class="form-control" placeholder="e.g., Purok 1">
-                            </div>
-                            <div class="mb-3">
-                                <label for="head_resident_id" class="form-label">Head Resident ID</label>
-                                <input type="number" id="head_resident_id" name="head_resident_id" class="form-control" min="1" placeholder="Leave empty if not yet assigned">
-                                <small class="form-text text-muted">This will be linked to residents table after head is registered.</small>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -155,25 +152,20 @@
                                 <input type="text" id="household_id_display" class="form-control" disabled>
                             </div>
                             <div class="mb-3">
-                                <label for="household_no_edit" class="form-label">Household No <span class="text-danger">*</span></label>
-                                <input type="text" id="household_no_edit" name="household_no" class="form-control" required placeholder="e.g., HH-2024-001">
+                                <label for="family_no_edit" class="form-label">Family No <span class="text-danger">*</span></label>
+                                <input type="number" id="family_no_edit" name="family_no" class="form-control" required placeholder="Enter family number" min="1">
+                            </div>
+                            <div class="mb-3">
+                                <label for="full_name_edit" class="form-label">Full Name <span class="text-danger">*</span></label>
+                                <input type="text" id="full_name_edit" name="full_name" class="form-control" required placeholder="Enter full name" maxlength="150">
                             </div>
                             <div class="mb-3">
                                 <label for="address_edit" class="form-label">Address <span class="text-danger">*</span></label>
-                                <input type="text" id="address_edit" name="address" class="form-control" required placeholder="Enter complete address">
+                                <input type="text" id="address_edit" name="address" class="form-control" required placeholder="Enter complete address" maxlength="255">
                             </div>
                             <div class="mb-3">
                                 <label for="income_edit" class="form-label">Household Income</label>
                                 <input type="number" id="income_edit" name="income" class="form-control" step="0.01" min="0" placeholder="0.00">
-                            </div>
-                            <div class="mb-3">
-                                <label for="purok_edit" class="form-label">Purok</label>
-                                <input type="text" id="purok_edit" name="purok" class="form-control" placeholder="e.g., Purok 1">
-                            </div>
-                            <div class="mb-3">
-                                <label for="head_resident_id_edit" class="form-label">Head Resident ID</label>
-                                <input type="number" id="head_resident_id_edit" name="head_resident_id" class="form-control" min="1" placeholder="Leave empty if not yet assigned">
-                                <small class="form-text text-muted">This will be linked to residents table after head is registered.</small>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -200,14 +192,14 @@
                                 <strong>Warning!</strong> This action cannot be undone.
                             </div>
                             <div class="mb-3">
-                                <label for="delete_household_no" class="form-label">Household No</label>
-                                <input type="text" id="delete_household_no" class="form-control" disabled>
+                                <label for="delete_household_id_display" class="form-label">Household ID</label>
+                                <input type="text" id="delete_household_id_display" class="form-control" disabled>
                             </div>
                             <div class="mb-3">
                                 <label for="confirm_delete_household" class="form-label">
-                                    Type the household no to confirm <span class="text-danger">*</span>
+                                    Type the household ID to confirm <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" id="confirm_delete_household" class="form-control" required placeholder="Type household no to confirm">
+                                <input type="text" id="confirm_delete_household" class="form-control" required placeholder="Type household ID to confirm">
                                 <small class="form-text text-muted">This is a safety measure to prevent accidental deletion.</small>
                             </div>
                         </div>
@@ -235,18 +227,18 @@
             document.getElementById('createHouseholdForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
 
-                const household_no = document.getElementById('household_no').value.trim();
+                const household_id = document.getElementById('household_id').value.trim();
+                const family_no = document.getElementById('family_no').value;
+                const full_name = document.getElementById('full_name').value.trim();
                 const address = document.getElementById('address').value.trim();
                 const income = document.getElementById('income').value;
-                const purok = document.getElementById('purok').value.trim();
-                const head_resident_id = document.getElementById('head_resident_id').value;
 
                 // Validation
-                if (!household_no || !address) {
+                if (!household_id || !family_no || !full_name || !address) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Validation Error',
-                        text: 'Please fill all required fields (Household No and Address).',
+                        text: 'Please fill all required fields (Household ID, Family No, Full Name, and Address).',
                         confirmButtonColor: '#6ec207'
                     });
                     return;
@@ -265,11 +257,11 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            household_no: household_no,
+                            household_id: household_id,
+                            family_no: parseInt(family_no),
+                            full_name: full_name,
                             address: address,
-                            income: income ? parseFloat(income) : 0.00,
-                            purok: purok || null,
-                            head_resident_id: head_resident_id ? parseInt(head_resident_id) : null
+                            income: income ? parseFloat(income) : 0.00
                         })
                     });
 
@@ -335,11 +327,10 @@
                 e.preventDefault();
 
                 const householdId = document.getElementById('household_id_edit').value;
-                const household_no = document.getElementById('household_no_edit').value.trim();
+                const family_no = document.getElementById('family_no_edit').value;
+                const full_name = document.getElementById('full_name_edit').value.trim();
                 const address = document.getElementById('address_edit').value.trim();
                 const income = document.getElementById('income_edit').value;
-                const purok = document.getElementById('purok_edit').value.trim();
-                const head_resident_id = document.getElementById('head_resident_id_edit').value;
 
                 if (!householdId) {
                     Swal.fire({
@@ -351,11 +342,11 @@
                     return;
                 }
 
-                if (!household_no || !address) {
+                if (!family_no || !full_name || !address) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Validation Error',
-                        text: 'Please fill all required fields (Household No and Address).',
+                        text: 'Please fill all required fields (Family No, Full Name, and Address).',
                         confirmButtonColor: '#6ec207'
                     });
                     return;
@@ -373,12 +364,11 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            household_id: parseInt(householdId),
-                            household_no: household_no,
+                            household_id: householdId,
+                            family_no: parseInt(family_no),
+                            full_name: full_name,
                             address: address,
-                            income: income ? parseFloat(income) : 0.00,
-                            purok: purok || null,
-                            head_resident_id: head_resident_id ? parseInt(head_resident_id) : null
+                            income: income ? parseFloat(income) : 0.00
                         })
                     });
 
@@ -428,14 +418,14 @@
                 e.preventDefault();
 
                 const householdId = document.getElementById('delete_household_id').value;
-                const householdNo = document.getElementById('delete_household_no').value;
+                const householdIdDisplay = document.getElementById('delete_household_id_display').value;
                 const confirmDelete = document.getElementById('confirm_delete_household').value.trim();
 
-                if (confirmDelete !== householdNo) {
+                if (confirmDelete !== householdIdDisplay) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Confirmation Failed',
-                        text: 'The household no does not match. Please type the correct household no.',
+                        text: 'The household ID does not match. Please type the correct household ID.',
                         confirmButtonColor: '#6ec207'
                     });
                     return;
@@ -453,7 +443,7 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            household_id: parseInt(householdId)
+                            household_id: householdId
                         })
                     });
 
@@ -503,28 +493,25 @@
                 if (e.target.closest('button[data-bs-target="#updateHouseholdModal"]')) {
                     const row = e.target.closest('tr');
                     const householdId = row.querySelector('td:nth-child(1)').textContent;
-                    const household_no = row.querySelector('td:nth-child(2)').textContent;
-                    const address = row.querySelector('td:nth-child(3)').textContent;
-                    const income = row.querySelector('td:nth-child(4)').textContent;
-                    const purok = row.querySelector('td:nth-child(5)').textContent;
-                    const head_resident_id = row.querySelector('td:nth-child(6)').textContent;
+                    const family_no = row.querySelector('td:nth-child(2)').textContent;
+                    const full_name = row.querySelector('td:nth-child(3)').textContent;
+                    const address = row.querySelector('td:nth-child(4)').textContent;
+                    const income = row.querySelector('td:nth-child(5)').textContent;
 
                     document.getElementById('household_id_edit').value = householdId;
                     document.getElementById('household_id_display').value = householdId;
-                    document.getElementById('household_no_edit').value = household_no;
+                    document.getElementById('family_no_edit').value = family_no;
+                    document.getElementById('full_name_edit').value = full_name;
                     document.getElementById('address_edit').value = address;
                     document.getElementById('income_edit').value = parseFloat(income.replace(/,/g, ''));
-                    document.getElementById('purok_edit').value = purok;
-                    document.getElementById('head_resident_id_edit').value = head_resident_id === 'N/A' ? '' : head_resident_id;
                 }
 
                 if (e.target.closest('button[data-bs-target="#deleteHouseholdModal"]')) {
                     const row = e.target.closest('tr');
                     const householdId = row.querySelector('td:nth-child(1)').textContent;
-                    const household_no = row.querySelector('td:nth-child(2)').textContent;
 
                     document.getElementById('delete_household_id').value = householdId;
-                    document.getElementById('delete_household_no').value = household_no;
+                    document.getElementById('delete_household_id_display').value = householdId;
                     document.getElementById('confirm_delete_household').value = '';
                 }
             });
