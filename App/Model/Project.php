@@ -46,16 +46,17 @@ class Project {
      * Create new project
      */
     public function create($data) {
+        // budget_remaining is a generated column (total_budget - budget_utilized) and should not be set manually
         $stmt = $this->connection->prepare(
             "INSERT INTO barangay_projects 
             (project_name, project_description, project_status, start_date, end_date, proponent, 
-             beneficiaries, location, total_budget, budget_utilized, budget_remaining, 
+             beneficiaries, location, total_budget, budget_utilized, 
              funding_source, project_category, priority_level, progress_percentage, remarks) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         );
         
         $stmt->bind_param(
-            "ssssssssdddsssds",
+            "ssssssssddsssis",
             $data['project_name'],
             $data['project_description'],
             $data['project_status'],
@@ -66,7 +67,6 @@ class Project {
             $data['location'],
             $data['total_budget'],
             $data['budget_utilized'],
-            $data['budget_remaining'],
             $data['funding_source'],
             $data['project_category'],
             $data['priority_level'],
@@ -85,14 +85,14 @@ class Project {
             "UPDATE barangay_projects 
             SET project_name = ?, project_description = ?, project_status = ?, 
                 start_date = ?, end_date = ?, proponent = ?, beneficiaries = ?, 
-                location = ?, total_budget = ?, budget_utilized = ?, budget_remaining = ?,
+                location = ?, total_budget = ?, budget_utilized = ?,
                 funding_source = ?, project_category = ?, priority_level = ?, 
                 progress_percentage = ?, remarks = ?
             WHERE project_id = ?"
         );
         
         $stmt->bind_param(
-            "ssssssssdddsssdsi",
+            "ssssssssddsssisi",
             $data['project_name'],
             $data['project_description'],
             $data['project_status'],
@@ -103,7 +103,6 @@ class Project {
             $data['location'],
             $data['total_budget'],
             $data['budget_utilized'],
-            $data['budget_remaining'],
             $data['funding_source'],
             $data['project_category'],
             $data['priority_level'],

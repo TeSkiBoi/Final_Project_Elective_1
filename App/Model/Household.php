@@ -41,28 +41,16 @@ class Household {
         $query = "SELECT household_id, family_no, full_name, address, income FROM " . $this->table . " WHERE household_id = ? LIMIT 1";
         $stmt = $this->connection->prepare($query);
         if (!$stmt) return null;
-        $stmt->bind_param('s', $household_id);
+        $stmt->bind_param('i', $household_id);
         $stmt->execute();
         $res = $stmt->get_result();
         return $res->fetch_assoc();
     }
 
     /**
-     * Generate next household ID (e.g., HH001, HH002)
+     * Household IDs are auto-increment integers in the database.
+     * No custom ID generation is required in the model.
      */
-    public function generateNextId() {
-        $query = "SELECT household_id FROM " . $this->table . " ORDER BY household_id DESC LIMIT 1";
-        $result = $this->connection->query($query);
-        
-        if ($result && $result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            $lastId = $row['household_id'];
-            $number = intval(substr($lastId, 2)) + 1;
-            return 'HH' . str_pad($number, 3, '0', STR_PAD_LEFT);
-        }
-        
-        return 'HH001';
-    }
 
     /**
      * Create household
@@ -78,9 +66,8 @@ class Household {
                 ];
             }
 
-            $household_id = $this->generateNextId();
-
-            $query = "INSERT INTO " . $this->table . " (household_id, family_no, full_name, address, income) VALUES (?, ?, ?, ?, ?)";
+            // Insert without household_id since DB uses auto-increment
+            $query = "INSERT INTO " . $this->table . " (family_no, full_name, address, income) VALUES (?, ?, ?, ?)";
             $stmt = $this->connection->prepare($query);
             
             if (!$stmt) {
@@ -91,13 +78,14 @@ class Household {
                 ];
             }
             
-            $stmt->bind_param('sissd', $household_id, $family_no, $full_name, $address, $income);
+            $stmt->bind_param('issd', $family_no, $full_name, $address, $income);
             
             if ($stmt->execute()) {
+                $insertedId = $this->connection->insert_id;
                 return [
                     'success' => true,
                     'message' => 'Household created successfully!',
-                    'household_id' => $household_id
+                    'household_id' => $insertedId
                 ];
             } else {
                 // Check if it's a duplicate entry error
@@ -143,7 +131,7 @@ class Household {
             // Check if family_no already exists for other records
             $checkQuery = "SELECT household_id FROM " . $this->table . " WHERE family_no = ? AND household_id != ? LIMIT 1";
             $checkStmt = $this->connection->prepare($checkQuery);
-            $checkStmt->bind_param('is', $family_no, $household_id);
+            $checkStmt->bind_param('ii', $family_no, $household_id);
             $checkStmt->execute();
             $checkResult = $checkStmt->get_result();
             
@@ -166,7 +154,7 @@ class Household {
                 ];
             }
             
-            $stmt->bind_param('issds', $family_no, $full_name, $address, $income, $household_id);
+            $stmt->bind_param('issdi', $family_no, $full_name, $address, $income, $household_id);
             
             if ($stmt->execute()) {
                 return [
@@ -206,7 +194,7 @@ class Household {
                 ];
             }
             
-            $stmt->bind_param('s', $household_id);
+            $stmt->bind_param('i', $household_id);
             
             if ($stmt->execute()) {
                 return [
@@ -254,22 +242,22 @@ class Household {
                 throw new Exception('Family No already exists');
             }
 
-            // Generate household ID
-            $household_id = $this->generateNextId();
-
-            // Insert household
-            $query = "INSERT INTO " . $this->table . " (household_id, family_no, full_name, address, income) VALUES (?, ?, ?, ?, ?)";
+            // Insert household (DB auto-increments household_id)
+            $query = "INSERT INTO " . $this->table . " (family_no, full_name, address, income) VALUES (?, ?, ?, ?)";
             $stmt = $this->connection->prepare($query);
             
             if (!$stmt) {
                 throw new Exception('Error preparing household statement: ' . $this->connection->error);
             }
             
-            $stmt->bind_param('sissd', $household_id, $family_no, $full_name, $address, $income);
+            $stmt->bind_param('issd', $family_no, $full_name, $address, $income);
             
             if (!$stmt->execute()) {
                 throw new Exception('Error creating household: ' . $stmt->error);
             }
+
+            // Get the inserted household ID
+            $household_id = (int) $this->connection->insert_id;
 
             // Insert members if provided
             $membersCreated = 0;
@@ -352,7 +340,7 @@ class Household {
             return [];
         }
         
-        $stmt->bind_param('s', $household_id);
+        $stmt->bind_param('i', $household_id);
         $stmt->execute();
         $result = $stmt->get_result();
 
