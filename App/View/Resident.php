@@ -56,13 +56,16 @@
                                 <table id="table" class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Full Name</th>
-                                            <th>Birthdate</th>
+                                            <th>Resident ID</th>
+                                            <th>First Name</th>
+                                            <th>Middle Name</th>
+                                            <th>Last Name</th>
+                                            <th>Birth Date</th>
                                             <th>Gender</th>
-                                            <th>Occupation</th>
-                                            <th>Household No</th>
-                                            <th>Relation to Head</th>
+                                            <th>Age</th>
+                                            <th>Contact No</th>
+                                            <th>Email</th>
+                                            <th>Household ID</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -70,25 +73,16 @@
                                         <?php if ($residents && count($residents) > 0): ?>
                                             <?php foreach ($residents as $resident): ?>
                                                 <tr data-household-id="<?php echo htmlspecialchars($resident['household_id']); ?>">
-                                                    <td><?php echo htmlspecialchars($resident['id']); ?></td>
-                                                    <td><?php echo htmlspecialchars($resident['full_name']); ?></td>
-                                                    <td><?php echo htmlspecialchars($resident['birthdate'] ?? ''); ?></td>
-                                                    <td><?php echo htmlspecialchars($resident['gender']); ?></td>
-                                                    <td><?php echo htmlspecialchars($resident['occupation'] ?? 'N/A'); ?></td>
-                                                    <td><?php echo htmlspecialchars($resident['household_no'] ?? 'N/A'); ?></td>
-                                                    <td>
-                                                        <?php 
-                                                        $relation = $resident['relation_to_head'];
-                                                        $badge_class = '';
-                                                        switch($relation) {
-                                                            case 'Head': $badge_class = 'bg-primary'; break;
-                                                            case 'Spouse': $badge_class = 'bg-success'; break;
-                                                            case 'Son': case 'Daughter': $badge_class = 'bg-info'; break;
-                                                            default: $badge_class = 'bg-secondary';
-                                                        }
-                                                        ?>
-                                                        <span class="badge <?php echo $badge_class; ?>"><?php echo htmlspecialchars($relation); ?></span>
-                                                    </td>
+                                                    <td><?php echo htmlspecialchars($resident['resident_id']); ?></td>
+                                                    <td><?php echo htmlspecialchars($resident['first_name']); ?></td>
+                                                    <td><?php echo htmlspecialchars($resident['middle_name'] ?? 'N/A'); ?></td>
+                                                    <td><?php echo htmlspecialchars($resident['last_name']); ?></td>
+                                                    <td><?php echo $resident['birth_date'] ? date('M d, Y', strtotime($resident['birth_date'])) : 'N/A'; ?></td>
+                                                    <td><?php echo htmlspecialchars($resident['gender'] ?? 'N/A'); ?></td>
+                                                    <td><?php echo htmlspecialchars($resident['age']); ?></td>
+                                                    <td><?php echo htmlspecialchars($resident['contact_no'] ?? 'N/A'); ?></td>
+                                                    <td><?php echo htmlspecialchars($resident['email'] ?? 'N/A'); ?></td>
+                                                    <td><?php echo htmlspecialchars($resident['household_id']); ?></td>
                                                     <td>
                                                         <button class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#updateResidentModal">
                                                             <i class="fas fa-edit"></i> Edit
@@ -101,7 +95,7 @@
                                             <?php endforeach; ?>
                                         <?php else: ?>
                                             <tr>
-                                                <td colspan="8" class="text-center text-muted py-4">
+                                                <td colspan="11" class="text-center text-muted py-4">
                                                     <i class="fas fa-inbox me-2"></i>No residents found. Click "Add New Resident" to create one.
                                                 </td>
                                             </tr>
@@ -128,24 +122,40 @@
                     <form id="createResidentForm">
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label for="full_name" class="form-label">Full Name <span class="text-danger">*</span></label>
-                                <input type="text" id="full_name" name="full_name" class="form-control" required placeholder="e.g., Juan Dela Cruz">
+                                <label for="first_name" class="form-label">First Name <span class="text-danger">*</span></label>
+                                <input type="text" id="first_name" name="first_name" class="form-control" required placeholder="e.g., Juan">
                             </div>
                             <div class="mb-3">
-                                <label for="birthdate" class="form-label">Birthdate <span class="text-danger">*</span></label>
-                                <input type="date" id="birthdate" name="birthdate" class="form-control" required>
+                                <label for="middle_name" class="form-label">Middle Name</label>
+                                <input type="text" id="middle_name" name="middle_name" class="form-control" placeholder="e.g., Santos">
                             </div>
                             <div class="mb-3">
-                                <label for="gender" class="form-label">Gender <span class="text-danger">*</span></label>
-                                <select id="gender" name="gender" class="form-select" required>
+                                <label for="last_name" class="form-label">Last Name <span class="text-danger">*</span></label>
+                                <input type="text" id="last_name" name="last_name" class="form-control" required placeholder="e.g., Dela Cruz">
+                            </div>
+                            <div class="mb-3">
+                                <label for="birth_date" class="form-label">Birth Date</label>
+                                <input type="date" id="birth_date" name="birth_date" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="gender" class="form-label">Gender</label>
+                                <select id="gender" name="gender" class="form-select">
                                     <option value="">-- Select Gender --</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="occupation" class="form-label">Occupation</label>
-                                <input type="text" id="occupation" name="occupation" class="form-control" placeholder="e.g., Teacher, Farmer">
+                                <label for="age" class="form-label">Age <span class="text-danger">*</span></label>
+                                <input type="number" id="age" name="age" class="form-control" required min="1" max="150" placeholder="e.g., 25">
+                            </div>
+                            <div class="mb-3">
+                                <label for="contact_no" class="form-label">Contact Number</label>
+                                <input type="text" id="contact_no" name="contact_no" class="form-control" placeholder="e.g., 09171234567">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" id="email" name="email" class="form-control" placeholder="e.g., juan@gmail.com">
                             </div>
                             <div class="mb-3">
                                 <label for="household_id" class="form-label">Household <span class="text-danger">*</span></label>
@@ -153,19 +163,9 @@
                                     <option value="">-- Select Household --</option>
                                     <?php foreach ($households as $household): ?>
                                         <option value="<?php echo $household['household_id']; ?>">
-                                            <?php echo htmlspecialchars($household['household_no'] . ' - ' . $household['address']); ?>
+                                            <?php echo htmlspecialchars($household['household_id'] . ' - ' . $household['address']); ?>
                                         </option>
                                     <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="relation_to_head" class="form-label">Relation to Head</label>
-                                <select id="relation_to_head" name="relation_to_head" class="form-select">
-                                    <option value="Other">Other</option>
-                                    <option value="Head">Head</option>
-                                    <option value="Spouse">Spouse</option>
-                                    <option value="Son">Son</option>
-                                    <option value="Daughter">Daughter</option>
                                 </select>
                             </div>
                         </div>
@@ -188,29 +188,46 @@
                     </div>
                     <form id="updateResidentForm">
                         <div class="modal-body">
-                            <input type="hidden" id="resident_id_edit" name="id">
+                            <input type="hidden" id="resident_id_edit" name="resident_id">
                             <div class="mb-3">
                                 <label for="resident_id_display" class="form-label">Resident ID</label>
                                 <input type="text" id="resident_id_display" class="form-control" disabled>
                             </div>
                             <div class="mb-3">
-                                <label for="full_name_edit" class="form-label">Full Name <span class="text-danger">*</span></label>
-                                <input type="text" id="full_name_edit" name="full_name" class="form-control" required>
+                                <label for="first_name_edit" class="form-label">First Name <span class="text-danger">*</span></label>
+                                <input type="text" id="first_name_edit" name="first_name" class="form-control" required>
                             </div>
                             <div class="mb-3">
-                                <label for="birthdate_edit" class="form-label">Birthdate <span class="text-danger">*</span></label>
-                                <input type="date" id="birthdate_edit" name="birthdate" class="form-control" required>
+                                <label for="middle_name_edit" class="form-label">Middle Name</label>
+                                <input type="text" id="middle_name_edit" name="middle_name" class="form-control">
                             </div>
                             <div class="mb-3">
-                                <label for="gender_edit" class="form-label">Gender <span class="text-danger">*</span></label>
-                                <select id="gender_edit" name="gender" class="form-select" required>
+                                <label for="last_name_edit" class="form-label">Last Name <span class="text-danger">*</span></label>
+                                <input type="text" id="last_name_edit" name="last_name" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="birth_date_edit" class="form-label">Birth Date</label>
+                                <input type="date" id="birth_date_edit" name="birth_date" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="gender_edit" class="form-label">Gender</label>
+                                <select id="gender_edit" name="gender" class="form-select">
+                                    <option value="">-- Select Gender --</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="occupation_edit" class="form-label">Occupation</label>
-                                <input type="text" id="occupation_edit" name="occupation" class="form-control">
+                                <label for="age_edit" class="form-label">Age <span class="text-danger">*</span></label>
+                                <input type="number" id="age_edit" name="age" class="form-control" required min="1" max="150">
+                            </div>
+                            <div class="mb-3">
+                                <label for="contact_no_edit" class="form-label">Contact Number</label>
+                                <input type="text" id="contact_no_edit" name="contact_no" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email_edit" class="form-label">Email</label>
+                                <input type="email" id="email_edit" name="email" class="form-control">
                             </div>
                             <div class="mb-3">
                                 <label for="household_id_edit" class="form-label">Household <span class="text-danger">*</span></label>
@@ -218,19 +235,9 @@
                                     <option value="">-- Select Household --</option>
                                     <?php foreach ($households as $household): ?>
                                         <option value="<?php echo $household['household_id']; ?>">
-                                            <?php echo htmlspecialchars($household['household_no'] . ' - ' . $household['address']); ?>
+                                            <?php echo htmlspecialchars($household['household_id'] . ' - ' . $household['address']); ?>
                                         </option>
                                     <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="relation_to_head_edit" class="form-label">Relation to Head</label>
-                                <select id="relation_to_head_edit" name="relation_to_head" class="form-select">
-                                    <option value="Other">Other</option>
-                                    <option value="Head">Head</option>
-                                    <option value="Spouse">Spouse</option>
-                                    <option value="Son">Son</option>
-                                    <option value="Daughter">Daughter</option>
                                 </select>
                             </div>
                         </div>
@@ -295,19 +302,22 @@
             document.getElementById('createResidentForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
 
-                const full_name = document.getElementById('full_name').value.trim();
-                const birthdate = document.getElementById('birthdate').value;
+                const first_name = document.getElementById('first_name').value.trim();
+                const middle_name = document.getElementById('middle_name').value.trim();
+                const last_name = document.getElementById('last_name').value.trim();
+                const birth_date = document.getElementById('birth_date').value;
                 const gender = document.getElementById('gender').value;
-                const occupation = document.getElementById('occupation').value.trim();
+                const age = document.getElementById('age').value;
+                const contact_no = document.getElementById('contact_no').value.trim();
+                const email = document.getElementById('email').value.trim();
                 const household_id = document.getElementById('household_id').value;
-                const relation_to_head = document.getElementById('relation_to_head').value;
 
                 // Validation
-                if (!full_name || !birthdate || !gender || !household_id) {
+                if (!first_name || !last_name || !age || !household_id) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Validation Error',
-                        text: 'Please fill all required fields (Full Name, Birthdate, Gender, Household).',
+                        text: 'Please fill all required fields (First Name, Last Name, Age, Household).',
                         confirmButtonColor: '#6ec207'
                     });
                     return;
@@ -326,12 +336,15 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            full_name: full_name,
-                            birthdate: birthdate,
-                            gender: gender,
-                            occupation: occupation || null,
-                            household_id: parseInt(household_id),
-                            relation_to_head: relation_to_head
+                            first_name: first_name,
+                            middle_name: middle_name || null,
+                            last_name: last_name,
+                            birth_date: birth_date || null,
+                            gender: gender || null,
+                            age: parseInt(age),
+                            contact_no: contact_no || null,
+                            email: email || null,
+                            household_id: household_id
                         })
                     });
 
@@ -397,12 +410,15 @@
                 e.preventDefault();
 
                 const residentId = document.getElementById('resident_id_edit').value;
-                const full_name = document.getElementById('full_name_edit').value.trim();
-                const birthdate = document.getElementById('birthdate_edit').value;
+                const first_name = document.getElementById('first_name_edit').value.trim();
+                const middle_name = document.getElementById('middle_name_edit').value.trim();
+                const last_name = document.getElementById('last_name_edit').value.trim();
+                const birth_date = document.getElementById('birth_date_edit').value;
                 const gender = document.getElementById('gender_edit').value;
-                const occupation = document.getElementById('occupation_edit').value.trim();
+                const age = document.getElementById('age_edit').value;
+                const contact_no = document.getElementById('contact_no_edit').value.trim();
+                const email = document.getElementById('email_edit').value.trim();
                 const household_id = document.getElementById('household_id_edit').value;
-                const relation_to_head = document.getElementById('relation_to_head_edit').value;
 
                 if (!residentId) {
                     Swal.fire({
@@ -414,7 +430,7 @@
                     return;
                 }
 
-                if (!full_name || !birthdate || !gender || !household_id) {
+                if (!first_name || !last_name || !age || !household_id) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Validation Error',
@@ -436,13 +452,16 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            id: parseInt(residentId),
-                            full_name: full_name,
-                            birthdate: birthdate,
-                            gender: gender,
-                            occupation: occupation || null,
-                            household_id: parseInt(household_id),
-                            relation_to_head: relation_to_head
+                            resident_id: residentId,
+                            first_name: first_name,
+                            middle_name: middle_name || null,
+                            last_name: last_name,
+                            birth_date: birth_date || null,
+                            gender: gender || null,
+                            age: parseInt(age),
+                            contact_no: contact_no || null,
+                            email: email || null,
+                            household_id: household_id
                         })
                     });
 
@@ -495,11 +514,11 @@
                 const residentName = document.getElementById('delete_resident_name').value;
                 const confirmDelete = document.getElementById('confirm_delete_resident').value.trim();
 
-                if (confirmDelete !== residentName) {
+                if (confirmDelete !== residentId) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Confirmation Failed',
-                        text: 'The name does not match. Please type the correct name.',
+                        text: 'The resident ID does not match. Please type the correct resident ID.',
                         confirmButtonColor: '#6ec207'
                     });
                     return;
@@ -517,7 +536,7 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            id: parseInt(residentId)
+                            resident_id: residentId
                         })
                     });
 
@@ -567,33 +586,44 @@
                 if (e.target.closest('button[data-bs-target="#updateResidentModal"]')) {
                     const row = e.target.closest('tr');
                     const residentId = row.querySelector('td:nth-child(1)').textContent;
-                    const full_name = row.querySelector('td:nth-child(2)').textContent;
-                    const birthdate = row.querySelector('td:nth-child(3)').textContent;
-                    const gender = row.querySelector('td:nth-child(4)').textContent;
-                    const occupation = row.querySelector('td:nth-child(5)').textContent;
-                    const household_no = row.querySelector('td:nth-child(6)').textContent;
-                    const relation_to_head = row.querySelector('td:nth-child(7)').textContent.trim();
+                    const first_name = row.querySelector('td:nth-child(2)').textContent;
+                    const middle_name = row.querySelector('td:nth-child(3)').textContent;
+                    const last_name = row.querySelector('td:nth-child(4)').textContent;
+                    const birth_date_text = row.querySelector('td:nth-child(5)').textContent;
+                    const gender = row.querySelector('td:nth-child(6)').textContent;
+                    const age = row.querySelector('td:nth-child(7)').textContent;
+                    const contact_no = row.querySelector('td:nth-child(8)').textContent;
+                    const email = row.querySelector('td:nth-child(9)').textContent;
+                    const household_id = row.querySelector('td:nth-child(10)').textContent;
 
-                    // Get household_id from data attribute
-                    const household_id = row.dataset.householdId || '';
+                    // Convert birth date from "Mon DD, YYYY" to "YYYY-MM-DD" format
+                    let birth_date = '';
+                    if (birth_date_text !== 'N/A') {
+                        const dateObj = new Date(birth_date_text);
+                        if (!isNaN(dateObj.getTime())) {
+                            birth_date = dateObj.toISOString().split('T')[0];
+                        }
+                    }
 
                     document.getElementById('resident_id_edit').value = residentId;
                     document.getElementById('resident_id_display').value = residentId;
-                    document.getElementById('full_name_edit').value = full_name;
-                    document.getElementById('birthdate_edit').value = birthdate;
-                    document.getElementById('gender_edit').value = gender;
-                    document.getElementById('occupation_edit').value = occupation === 'N/A' ? '' : occupation;
+                    document.getElementById('first_name_edit').value = first_name;
+                    document.getElementById('middle_name_edit').value = middle_name === 'N/A' ? '' : middle_name;
+                    document.getElementById('last_name_edit').value = last_name;
+                    document.getElementById('birth_date_edit').value = birth_date;
+                    document.getElementById('gender_edit').value = gender === 'N/A' ? '' : gender;
+                    document.getElementById('age_edit').value = age;
+                    document.getElementById('contact_no_edit').value = contact_no === 'N/A' ? '' : contact_no;
+                    document.getElementById('email_edit').value = email === 'N/A' ? '' : email;
                     document.getElementById('household_id_edit').value = household_id;
-                    document.getElementById('relation_to_head_edit').value = relation_to_head;
                 }
 
                 if (e.target.closest('button[data-bs-target="#deleteResidentModal"]')) {
                     const row = e.target.closest('tr');
                     const residentId = row.querySelector('td:nth-child(1)').textContent;
-                    const full_name = row.querySelector('td:nth-child(2)').textContent;
 
                     document.getElementById('delete_resident_id').value = residentId;
-                    document.getElementById('delete_resident_name').value = full_name;
+                    document.getElementById('delete_resident_name').value = residentId;
                     document.getElementById('confirm_delete_resident').value = '';
                 }
             });

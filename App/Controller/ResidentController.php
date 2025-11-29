@@ -59,14 +59,14 @@ function handleUpdate() {
     }
 
     $data = json_decode(file_get_contents('php://input'), true);
-    if (empty($data['id'])) {
+    if (empty($data['resident_id'])) {
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Resident ID is required']);
         return;
     }
 
-    $id = $data['id'];
-    $result = $residentModel->update($id, $data);
+    $resident_id = $data['resident_id'];
+    $result = $residentModel->update($resident_id, $data);
     echo json_encode($result);
     exit;
 }
@@ -80,14 +80,14 @@ function handleDelete() {
     }
 
     $data = json_decode(file_get_contents('php://input'), true);
-    if (empty($data['id'])) {
+    if (empty($data['resident_id'])) {
         http_response_code(400);
         echo json_encode(['success' => false, 'message' => 'Resident ID is required']);
         return;
     }
 
-    $id = $data['id'];
-    $result = $residentModel->delete($id);
+    $resident_id = $data['resident_id'];
+    $result = $residentModel->delete($resident_id);
     echo json_encode($result);
     exit;
 }

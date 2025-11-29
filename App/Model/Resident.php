@@ -16,10 +16,10 @@ class Resident {
     }
 
     public function getAll() {
-        $query = "SELECT r.id, r.full_name, r.birthdate, r.gender, r.occupation, r.household_id, r.relation_to_head, h.household_no 
+        $query = "SELECT r.resident_id, r.household_id, r.first_name, r.middle_name, r.last_name, r.birth_date, r.gender, r.age, r.contact_no, r.email, r.created_at, h.household_id as hh_id 
                   FROM " . $this->table . " r 
                   LEFT JOIN households h ON r.household_id = h.household_id 
-                  ORDER BY r.full_name ASC";
+                  ORDER BY r.last_name ASC, r.first_name ASC";
         $result = $this->connection->query($query);
 
         if (!$result) return false;
@@ -31,22 +31,37 @@ class Resident {
         return $rows;
     }
 
-    public function getById($id) {
-        $query = "SELECT r.*, h.household_no FROM " . $this->table . " r LEFT JOIN households h ON r.household_id = h.household_id WHERE r.id = ? LIMIT 1";
+    public function getById($resident_id) {
+        $query = "SELECT r.*, h.household_id as hh_id FROM " . $this->table . " r LEFT JOIN households h ON r.household_id = h.household_id WHERE r.resident_id = ? LIMIT 1";
         $stmt = $this->connection->prepare($query);
         if (!$stmt) return null;
-        $stmt->bind_param('i', $id);
+        $stmt->bind_param('s', $resident_id);
         $stmt->execute();
         $res = $stmt->get_result();
         return $res ? $res->fetch_assoc() : null;
     }
 
-
+    /**
+     * Generate next resident ID (e.g., R001, R002)
+     */
+    public function generateNextId() {
+        $query = "SELECT resident_id FROM " . $this->table . " ORDER BY resident_id DESC LIMIT 1";
+        $result = $this->connection->query($query);
+        
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $lastId = $row['resident_id'];
+            $number = intval(substr($lastId, 1)) + 1;
+            return 'R' . str_pad($number, 3, '0', STR_PAD_LEFT);
+        }
+        
+        return 'R001';
+    }
 
     public function create($data) {
         try {
             // Required fields validation
-            $required = ['full_name', 'birthdate', 'gender', 'household_id'];
+            $required = ['first_name', 'last_name', 'age', 'household_id'];
             foreach ($required as $f) {
                 if (empty($data[$f])) {
                     return [
@@ -57,14 +72,18 @@ class Resident {
                 }
             }
 
-            $full_name = $data['full_name'];
-            $birthdate = $data['birthdate'];
-            $gender = $data['gender'];
-            $occupation = $data['occupation'] ?? null;
+            $resident_id = $this->generateNextId();
             $household_id = $data['household_id'];
-            $relation_to_head = $data['relation_to_head'] ?? 'Other';
+            $first_name = $data['first_name'];
+            $middle_name = $data['middle_name'] ?? null;
+            $last_name = $data['last_name'];
+            $birth_date = $data['birth_date'] ?? null;
+            $gender = $data['gender'] ?? null;
+            $age = $data['age'];
+            $contact_no = $data['contact_no'] ?? null;
+            $email = $data['email'] ?? null;
 
-            $query = "INSERT INTO " . $this->table . " (full_name, birthdate, gender, occupation, household_id, relation_to_head) VALUES (?, ?, ?, ?, ?, ?)";
+            $query = "INSERT INTO " . $this->table . " (resident_id, household_id, first_name, middle_name, last_name, birth_date, gender, age, contact_no, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->connection->prepare($query);
             
             if (!$stmt) {
@@ -75,13 +94,13 @@ class Resident {
                 ];
             }
 
-            $stmt->bind_param('ssss is', $full_name, $birthdate, $gender, $occupation, $household_id, $relation_to_head);
+            $stmt->bind_param('ssssssisss', $resident_id, $household_id, $first_name, $middle_name, $last_name, $birth_date, $gender, $age, $contact_no, $email);
             
             if ($stmt->execute()) {
                 return [
                     'success' => true,
                     'message' => 'Resident created successfully!',
-                    'id' => $this->connection->insert_id
+                    'resident_id' => $resident_id
                 ];
             } else {
                 return [
@@ -100,10 +119,10 @@ class Resident {
         }
     }
 
-    public function update($id, $data) {
+    public function update($resident_id, $data) {
         try {
             // Validate resident exists
-            $existing = $this->getById($id);
+            $existing = $this->getById($resident_id);
             if (!$existing) {
                 return [
                     'success' => false,
@@ -112,14 +131,17 @@ class Resident {
                 ];
             }
 
-            $full_name = $data['full_name'] ?? $existing['full_name'];
-            $birthdate = $data['birthdate'] ?? $existing['birthdate'];
-            $gender = $data['gender'] ?? $existing['gender'];
-            $occupation = $data['occupation'] ?? $existing['occupation'];
             $household_id = $data['household_id'] ?? $existing['household_id'];
-            $relation_to_head = $data['relation_to_head'] ?? $existing['relation_to_head'];
+            $first_name = $data['first_name'] ?? $existing['first_name'];
+            $middle_name = $data['middle_name'] ?? $existing['middle_name'];
+            $last_name = $data['last_name'] ?? $existing['last_name'];
+            $birth_date = $data['birth_date'] ?? $existing['birth_date'];
+            $gender = $data['gender'] ?? $existing['gender'];
+            $age = $data['age'] ?? $existing['age'];
+            $contact_no = $data['contact_no'] ?? $existing['contact_no'];
+            $email = $data['email'] ?? $existing['email'];
 
-            $query = "UPDATE " . $this->table . " SET full_name = ?, birthdate = ?, gender = ?, occupation = ?, household_id = ?, relation_to_head = ? WHERE id = ?";
+            $query = "UPDATE " . $this->table . " SET household_id = ?, first_name = ?, middle_name = ?, last_name = ?, birth_date = ?, gender = ?, age = ?, contact_no = ?, email = ? WHERE resident_id = ?";
             $stmt = $this->connection->prepare($query);
             
             if (!$stmt) {
@@ -130,7 +152,7 @@ class Resident {
                 ];
             }
 
-            $stmt->bind_param('ssssi si', $full_name, $birthdate, $gender, $occupation, $household_id, $relation_to_head, $id);
+            $stmt->bind_param('ssssssisss', $household_id, $first_name, $middle_name, $last_name, $birth_date, $gender, $age, $contact_no, $email, $resident_id);
             
             if ($stmt->execute()) {
                 return [
@@ -154,9 +176,9 @@ class Resident {
         }
     }
 
-    public function delete($id) {
+    public function delete($resident_id) {
         try {
-            $query = "DELETE FROM " . $this->table . " WHERE id = ?";
+            $query = "DELETE FROM " . $this->table . " WHERE resident_id = ?";
             $stmt = $this->connection->prepare($query);
             
             if (!$stmt) {
@@ -167,7 +189,7 @@ class Resident {
                 ];
             }
 
-            $stmt->bind_param('i', $id);
+            $stmt->bind_param('s', $resident_id);
             
             if ($stmt->execute()) {
                 return [

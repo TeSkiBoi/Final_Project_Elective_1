@@ -6,7 +6,7 @@
 
 class Database {
     private $host = 'localhost';
-    private $db_name = 'student_information_system';
+    private $db_name = 'barangay_biga_db';
     private $username = 'root';
     private $password = '';
     private $connection;
