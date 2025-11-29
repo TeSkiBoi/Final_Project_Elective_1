@@ -70,6 +70,12 @@
                                                     <td><?php echo htmlspecialchars($household['address']); ?></td>
                                                     <td><?php echo number_format($household['income'] ?? 0, 2); ?></td>
                                                     <td>
+                                                        <button class="btn btn-sm btn-info me-1 view-members-btn" 
+                                                                data-household-id="<?php echo htmlspecialchars($household['household_id']); ?>"
+                                                                data-household-name="<?php echo htmlspecialchars($household['full_name']); ?>"
+                                                                title="View Members">
+                                                            <i class="fas fa-eye"></i> View
+                                                        </button>
                                                         <button class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#updateHouseholdModal">
                                                             <i class="fas fa-edit"></i> Edit
                                                         </button>
@@ -99,17 +105,24 @@
         <!-- Logout Modal -->
         <!-- Create / Update / Delete Modals -->
         <div class="modal fade" id="createHouseholdModal" tabindex="-1" aria-labelledby="createHouseholdModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="createHouseholdModalLabel"><i class="fas fa-plus me-2"></i>Create Household</h5>
+                        <h5 class="modal-title" id="createHouseholdModalLabel"><i class="fas fa-plus me-2"></i>Create Household with Members</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <form id="createHouseholdForm">
                         <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="family_no" class="form-label">Family No <span class="text-danger">*</span></label>
-                                <input type="number" id="family_no" name="family_no" class="form-control" required placeholder="e.g., 1">
+                            <h6 class="mb-3 text-primary"><i class="fas fa-home me-2"></i>Household Information</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="family_no" class="form-label">Family No <span class="text-danger">*</span></label>
+                                    <input type="number" id="family_no" name="family_no" class="form-control" required placeholder="e.g., 1">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="income" class="form-label">Household Income</label>
+                                    <input type="number" id="income" name="income" class="form-control" step="0.01" min="0" placeholder="0.00">
+                                </div>
                             </div>
                             <div class="mb-3">
                                 <label for="full_name" class="form-label">Full Name (Household Head) <span class="text-danger">*</span></label>
@@ -119,9 +132,18 @@
                                 <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
                                 <input type="text" id="address" name="address" class="form-control" required placeholder="Enter complete address">
                             </div>
-                            <div class="mb-3">
-                                <label for="income" class="form-label">Household Income</label>
-                                <input type="number" id="income" name="income" class="form-control" step="0.01" min="0" placeholder="0.00">
+
+                            <hr class="my-4">
+
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0 text-primary"><i class="fas fa-users me-2"></i>Household Members</h6>
+                                <button type="button" class="btn btn-sm btn-success" id="addMemberBtn">
+                                    <i class="fas fa-plus me-1"></i>Add Member
+                                </button>
+                            </div>
+
+                            <div id="membersContainer">
+                                <!-- Member forms will be added here dynamically -->
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -134,7 +156,7 @@
         </div>
 
         <div class="modal fade" id="updateHouseholdModal" tabindex="-1" aria-labelledby="updateHouseholdModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="updateHouseholdModalLabel"><i class="fas fa-edit me-2"></i>Update Household</h5>
@@ -143,25 +165,49 @@
                     <form id="updateHouseholdForm">
                         <div class="modal-body">
                             <input type="hidden" id="household_id_edit" name="household_id">
-                            <div class="mb-3">
-                                <label for="household_id_display" class="form-label">Household ID</label>
-                                <input type="text" id="household_id_display" class="form-control" disabled>
-                            </div>
-                            <div class="mb-3">
-                                <label for="family_no_edit" class="form-label">Family No <span class="text-danger">*</span></label>
-                                <input type="number" id="family_no_edit" name="family_no" class="form-control" required placeholder="e.g., 1">
+                            
+                            <h6 class="mb-3 text-primary"><i class="fas fa-home me-2"></i>Household Information</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="household_id_display" class="form-label">Household ID</label>
+                                    <input type="text" id="household_id_display" class="form-control" disabled>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="family_no_edit" class="form-label">Family No <span class="text-danger">*</span></label>
+                                    <input type="number" id="family_no_edit" name="family_no" class="form-control" required placeholder="e.g., 1">
+                                </div>
                             </div>
                             <div class="mb-3">
                                 <label for="full_name_edit" class="form-label">Full Name (Household Head) <span class="text-danger">*</span></label>
                                 <input type="text" id="full_name_edit" name="full_name" class="form-control" required placeholder="Enter full name of household head">
                             </div>
-                            <div class="mb-3">
-                                <label for="address_edit" class="form-label">Address <span class="text-danger">*</span></label>
-                                <input type="text" id="address_edit" name="address" class="form-control" required placeholder="Enter complete address">
+                            <div class="row">
+                                <div class="col-md-8 mb-3">
+                                    <label for="address_edit" class="form-label">Address <span class="text-danger">*</span></label>
+                                    <input type="text" id="address_edit" name="address" class="form-control" required placeholder="Enter complete address">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="income_edit" class="form-label">Household Income</label>
+                                    <input type="number" id="income_edit" name="income" class="form-control" step="0.01" min="0" placeholder="0.00">
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="income_edit" class="form-label">Household Income</label>
-                                <input type="number" id="income_edit" name="income" class="form-control" step="0.01" min="0" placeholder="0.00">
+
+                            <hr class="my-4">
+
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0 text-primary"><i class="fas fa-users me-2"></i>Household Members</h6>
+                                <button type="button" class="btn btn-sm btn-success" id="addMemberBtnEdit">
+                                    <i class="fas fa-plus me-1"></i>Add Member
+                                </button>
+                            </div>
+
+                            <div id="membersContainerEdit">
+                                <!-- Existing and new member forms will be added here -->
+                                <div class="text-center py-3" id="loadingMembersEdit">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                        <span class="visually-hidden">Loading members...</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -208,6 +254,57 @@
             </div>
         </div>
 
+        <!-- View Members Modal -->
+        <div class="modal fade" id="viewMembersModal" tabindex="-1" aria-labelledby="viewMembersModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h5 class="modal-title" id="viewMembersModalLabel">
+                            <i class="fas fa-users me-2"></i>Household Members - <span id="modalHouseholdName"></span>
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="membersLoadingSpinner" class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-3 text-muted">Loading members...</p>
+                        </div>
+
+                        <div id="membersContent" style="display: none;">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Resident ID</th>
+                                            <th>Full Name</th>
+                                            <th>Birth Date</th>
+                                            <th>Age</th>
+                                            <th>Gender</th>
+                                            <th>Contact No</th>
+                                            <th>Email</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="membersTableBody">
+                                        <!-- Members will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="noMembersMessage" class="alert alert-info" style="display: none;">
+                                <i class="fas fa-info-circle me-2"></i>No members found for this household.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <?php include 'template/script.php'; ?>
 
         <!-- SweetAlert2 CDN -->
@@ -216,6 +313,294 @@
         <script>
             // API Base URL
             const API_URL = '../../App/Controller/HouseholdController.php';
+
+            // Member counter for unique IDs
+            let memberCount = 0;
+            let editMemberCount = 0;
+
+            /**
+             * Calculate Age from Birth Date
+             */
+            function calculateAge(birthDate) {
+                const today = new Date();
+                const birth = new Date(birthDate);
+                let age = today.getFullYear() - birth.getFullYear();
+                const monthDiff = today.getMonth() - birth.getMonth();
+                
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+                    age--;
+                }
+                
+                return age >= 0 ? age : 0;
+            }
+
+            /**
+             * Add Member Form Fields (Create Modal)
+             */
+            document.getElementById('addMemberBtn').addEventListener('click', function() {
+                memberCount++;
+                const memberHtml = `
+                    <div class="member-form border rounded p-3 mb-3" id="member-${memberCount}">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0 text-secondary"><i class="fas fa-user me-2"></i>Member #${memberCount}</h6>
+                            <button type="button" class="btn btn-sm btn-danger remove-member-btn" data-member-id="${memberCount}">
+                                <i class="fas fa-times"></i> Remove
+                            </button>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label">First Name <span class="text-danger">*</span></label>
+                                <input type="text" name="member_first_name[]" class="form-control form-control-sm" required placeholder="First name">
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label">Middle Name</label>
+                                <input type="text" name="member_middle_name[]" class="form-control form-control-sm" placeholder="Middle name (optional)">
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label">Last Name <span class="text-danger">*</span></label>
+                                <input type="text" name="member_last_name[]" class="form-control form-control-sm" required placeholder="Last name">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label">Birth Date <span class="text-danger">*</span></label>
+                                <input type="date" name="member_birth_date[]" class="form-control form-control-sm birth-date-input" required>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <label class="form-label">Age</label>
+                                <input type="number" name="member_age[]" class="form-control form-control-sm age-display" readonly placeholder="Auto">
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <label class="form-label">Gender <span class="text-danger">*</span></label>
+                                <select name="member_gender[]" class="form-select form-select-sm" required>
+                                    <option value="">Select</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <label class="form-label">Contact No</label>
+                                <input type="text" name="member_contact[]" class="form-control form-control-sm" placeholder="09XXXXXXXXX">
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="member_email[]" class="form-control form-control-sm" placeholder="email@example.com">
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('membersContainer').insertAdjacentHTML('beforeend', memberHtml);
+            });
+
+            /**
+             * Remove Member Form Fields (Create Modal)
+             */
+            document.getElementById('membersContainer').addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-member-btn') || e.target.closest('.remove-member-btn')) {
+                    const btn = e.target.closest('.remove-member-btn');
+                    const memberId = btn.getAttribute('data-member-id');
+                    const memberForm = document.getElementById(`member-${memberId}`);
+                    if (memberForm) {
+                        memberForm.remove();
+                    }
+                }
+            });
+
+            /**
+             * Add Member Form Fields (Edit Modal)
+             */
+            document.getElementById('addMemberBtnEdit').addEventListener('click', function() {
+                editMemberCount++;
+                const memberHtml = `
+                    <div class="member-form border rounded p-3 mb-3 bg-light" id="edit-member-new-${editMemberCount}" data-member-type="new">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0 text-success"><i class="fas fa-user-plus me-2"></i>New Member #${editMemberCount}</h6>
+                            <button type="button" class="btn btn-sm btn-danger remove-member-btn-edit" data-member-id="edit-member-new-${editMemberCount}">
+                                <i class="fas fa-times"></i> Remove
+                            </button>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label">First Name <span class="text-danger">*</span></label>
+                                <input type="text" name="member_first_name_edit[]" class="form-control form-control-sm" required placeholder="First name">
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label">Middle Name</label>
+                                <input type="text" name="member_middle_name_edit[]" class="form-control form-control-sm" placeholder="Middle name (optional)">
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="form-label">Last Name <span class="text-danger">*</span></label>
+                                <input type="text" name="member_last_name_edit[]" class="form-control form-control-sm" required placeholder="Last name">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label">Birth Date <span class="text-danger">*</span></label>
+                                <input type="date" name="member_birth_date_edit[]" class="form-control form-control-sm birth-date-input" required>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <label class="form-label">Age</label>
+                                <input type="number" name="member_age_edit[]" class="form-control form-control-sm age-display" readonly placeholder="Auto">
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <label class="form-label">Gender <span class="text-danger">*</span></label>
+                                <select name="member_gender_edit[]" class="form-select form-select-sm" required>
+                                    <option value="">Select</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 mb-2">
+                                <label class="form-label">Contact No</label>
+                                <input type="text" name="member_contact_edit[]" class="form-control form-control-sm" placeholder="09XXXXXXXXX">
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="member_email_edit[]" class="form-control form-control-sm" placeholder="email@example.com">
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('membersContainerEdit').insertAdjacentHTML('beforeend', memberHtml);
+            });
+
+            /**
+             * Remove Member Form Fields (Edit Modal) - Handles both existing and new members
+             */
+            document.getElementById('membersContainerEdit').addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-member-btn-edit') || e.target.closest('.remove-member-btn-edit')) {
+                    const btn = e.target.closest('.remove-member-btn-edit');
+                    const memberId = btn.getAttribute('data-member-id');
+                    const memberForm = document.getElementById(memberId);
+                    
+                    if (memberForm) {
+                        const memberType = memberForm.getAttribute('data-member-type');
+                        
+                        if (memberType === 'existing') {
+                            // Check if already marked for deletion
+                            if (memberForm.getAttribute('data-deleted') === 'true') {
+                                // Undo deletion
+                                memberForm.classList.remove('border-danger', 'opacity-50');
+                                memberForm.removeAttribute('data-deleted');
+                                btn.innerHTML = '<i class="fas fa-times"></i> Remove';
+                                btn.classList.remove('btn-warning');
+                                btn.classList.add('btn-danger');
+                            } else {
+                                // Mark for deletion with visual feedback
+                                memberForm.classList.add('border-danger', 'opacity-50');
+                                memberForm.setAttribute('data-deleted', 'true');
+                                btn.innerHTML = '<i class="fas fa-undo"></i> Undo';
+                                btn.classList.remove('btn-danger');
+                                btn.classList.add('btn-warning');
+                            }
+                        } else {
+                            // Just remove new members
+                            memberForm.remove();
+                        }
+                    }
+                }
+            });
+
+            /**
+             * Load Existing Members for Edit Modal
+             */
+            async function loadExistingMembers(householdId) {
+                const container = document.getElementById('membersContainerEdit');
+                const loading = document.getElementById('loadingMembersEdit');
+                
+                // Show loading
+                loading.style.display = 'block';
+                container.innerHTML = '<div class="text-center py-3" id="loadingMembersEdit"><div class="spinner-border spinner-border-sm text-primary" role="status"><span class="visually-hidden">Loading members...</span></div></div>';
+                
+                try {
+                    const response = await fetch(API_URL + `?action=getMembers&household_id=${householdId}`);
+                    const result = await response.json();
+                    
+                    // Clear loading
+                    container.innerHTML = '';
+                    
+                    if (result.success && result.data && result.data.length > 0) {
+                        result.data.forEach((member, index) => {
+                            const memberHtml = `
+                                <div class="member-form border rounded p-3 mb-3" id="edit-member-${member.resident_id}" data-member-type="existing" data-resident-id="${member.resident_id}">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="mb-0 text-secondary"><i class="fas fa-user me-2"></i>Member: ${member.first_name} ${member.last_name}</h6>
+                                        <button type="button" class="btn btn-sm btn-danger remove-member-btn-edit" data-member-id="edit-member-${member.resident_id}">
+                                            <i class="fas fa-times"></i> Remove
+                                        </button>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-2">
+                                            <label class="form-label">First Name <span class="text-danger">*</span></label>
+                                            <input type="text" name="existing_member_first_name[]" class="form-control form-control-sm" required value="${member.first_name}">
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <label class="form-label">Middle Name</label>
+                                            <input type="text" name="existing_member_middle_name[]" class="form-control form-control-sm" value="${member.middle_name || ''}">
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <label class="form-label">Last Name <span class="text-danger">*</span></label>
+                                            <input type="text" name="existing_member_last_name[]" class="form-control form-control-sm" required value="${member.last_name}">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3 mb-2">
+                                            <label class="form-label">Birth Date <span class="text-danger">*</span></label>
+                                            <input type="date" name="existing_member_birth_date[]" class="form-control form-control-sm birth-date-input" required value="${member.birth_date}">
+                                        </div>
+                                        <div class="col-md-2 mb-2">
+                                            <label class="form-label">Age</label>
+                                            <input type="number" name="existing_member_age[]" class="form-control form-control-sm age-display" readonly value="${member.age || calculateAge(member.birth_date)}">
+                                        </div>
+                                        <div class="col-md-2 mb-2">
+                                            <label class="form-label">Gender <span class="text-danger">*</span></label>
+                                            <select name="existing_member_gender[]" class="form-select form-select-sm" required>
+                                                <option value="">Select</option>
+                                                <option value="Male" ${member.gender === 'Male' ? 'selected' : ''}>Male</option>
+                                                <option value="Female" ${member.gender === 'Female' ? 'selected' : ''}>Female</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 mb-2">
+                                            <label class="form-label">Contact No</label>
+                                            <input type="text" name="existing_member_contact[]" class="form-control form-control-sm" value="${member.contact_no || ''}">
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" name="existing_member_email[]" class="form-control form-control-sm" value="${member.email || ''}">
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="existing_member_id[]" value="${member.resident_id}">
+                                </div>
+                            `;
+                            container.insertAdjacentHTML('beforeend', memberHtml);
+                        });
+                    } else {
+                        container.innerHTML = '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>No members found. Click "Add Member" to add new members.</div>';
+                    }
+                } catch (error) {
+                    console.error('Error loading members:', error);
+                    container.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Failed to load members.</div>';
+                }
+            }
+
+            /**
+             * Auto-calculate age when birth date changes (using event delegation)
+             */
+            document.addEventListener('change', function(e) {
+                if (e.target.classList.contains('birth-date-input')) {
+                    const birthDate = e.target.value;
+                    if (birthDate) {
+                        const age = calculateAge(birthDate);
+                        const memberForm = e.target.closest('.member-form');
+                        if (memberForm) {
+                            const ageInput = memberForm.querySelector('.age-display');
+                            if (ageInput) {
+                                ageInput.value = age;
+                            }
+                        }
+                    }
+                }
+            });
 
             /**
              * Create Household Form Submission
@@ -239,6 +624,42 @@
                     return;
                 }
 
+                // Collect members data
+                const members = [];
+                const memberForms = document.querySelectorAll('.member-form');
+                
+                for (let form of memberForms) {
+                    const firstName = form.querySelector('input[name="member_first_name[]"]').value.trim();
+                    const middleName = form.querySelector('input[name="member_middle_name[]"]').value.trim();
+                    const lastName = form.querySelector('input[name="member_last_name[]"]').value.trim();
+                    const birthDate = form.querySelector('input[name="member_birth_date[]"]').value;
+                    const gender = form.querySelector('select[name="member_gender[]"]').value;
+                    const contact = form.querySelector('input[name="member_contact[]"]').value.trim();
+                    const email = form.querySelector('input[name="member_email[]"]').value.trim();
+                    const age = form.querySelector('input[name="member_age[]"]').value;
+
+                    if (!firstName || !lastName || !birthDate || !gender) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Member Validation Error',
+                            text: 'Please fill all required fields for each member (First Name, Last Name, Birth Date, Gender).',
+                            confirmButtonColor: '#6ec207'
+                        });
+                        return;
+                    }
+
+                    members.push({
+                        first_name: firstName,
+                        middle_name: middleName || '',
+                        last_name: lastName,
+                        birth_date: birthDate,
+                        gender: gender,
+                        age: age ? parseInt(age) : calculateAge(birthDate),
+                        contact_no: contact || '',
+                        email: email || ''
+                    });
+                }
+
                 // Show loading state
                 const submitBtn = this.querySelector('button[type="submit"]');
                 const originalText = submitBtn.innerHTML;
@@ -246,7 +667,7 @@
                 submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
 
                 try {
-                    const response = await fetch(API_URL + '?action=create', {
+                    const response = await fetch(API_URL + '?action=createWithMembers', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -255,7 +676,8 @@
                             family_no: parseInt(family_no),
                             full_name: full_name,
                             address: address,
-                            income: income ? parseFloat(income) : 0.00
+                            income: income ? parseFloat(income) : 0.00,
+                            members: members
                         })
                     });
 
@@ -272,6 +694,8 @@
                             if (result.isConfirmed) {
                                 // Reset form
                                 document.getElementById('createHouseholdForm').reset();
+                                document.getElementById('membersContainer').innerHTML = '';
+                                memberCount = 0;
 
                                 // Close modal
                                 const modal = bootstrap.Modal.getInstance(document.getElementById('createHouseholdModal'));
@@ -315,7 +739,7 @@
             });
 
             /**
-             * Update Household Form Submission
+             * Update Household Form Submission with Member Management
              */
             document.getElementById('updateHouseholdForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
@@ -346,13 +770,83 @@
                     return;
                 }
 
+                // Collect member operations
+                const memberOperations = {
+                    add: [],
+                    update: [],
+                    delete: []
+                };
+
+                // Collect existing members to update
+                const existingMembers = document.querySelectorAll('.member-form[data-member-type="existing"]');
+                existingMembers.forEach(form => {
+                    const residentId = form.getAttribute('data-resident-id');
+                    const isDeleted = form.getAttribute('data-deleted') === 'true';
+
+                    if (isDeleted) {
+                        memberOperations.delete.push(residentId);
+                    } else {
+                        const firstNames = form.querySelectorAll('input[name="existing_member_first_name[]"]');
+                        const middleNames = form.querySelectorAll('input[name="existing_member_middle_name[]"]');
+                        const lastNames = form.querySelectorAll('input[name="existing_member_last_name[]"]');
+                        const birthDates = form.querySelectorAll('input[name="existing_member_birth_date[]"]');
+                        const genders = form.querySelectorAll('select[name="existing_member_gender[]"]');
+                        const contacts = form.querySelectorAll('input[name="existing_member_contact[]"]');
+                        const emails = form.querySelectorAll('input[name="existing_member_email[]"]');
+                        const ages = form.querySelectorAll('input[name="existing_member_age[]"]');
+
+                        if (firstNames.length > 0) {
+                            const birthDate = birthDates[0].value;
+                            const age = ages.length > 0 && ages[0].value ? parseInt(ages[0].value) : calculateAge(birthDate);
+                            
+                            memberOperations.update.push({
+                                resident_id: residentId,
+                                first_name: firstNames[0].value.trim(),
+                                middle_name: middleNames[0]?.value.trim() || '',
+                                last_name: lastNames[0].value.trim(),
+                                birth_date: birthDate,
+                                gender: genders[0].value,
+                                age: age,
+                                contact_no: contacts[0]?.value.trim() || '',
+                                email: emails[0]?.value.trim() || ''
+                            });
+                        }
+                    }
+                });
+
+                // Collect new members to add
+                const newMembers = document.querySelectorAll('.member-form[data-member-type="new"]');
+                newMembers.forEach(form => {
+                    const firstName = form.querySelector('input[name="member_first_name_edit[]"]')?.value.trim();
+                    const middleName = form.querySelector('input[name="member_middle_name_edit[]"]')?.value.trim();
+                    const lastName = form.querySelector('input[name="member_last_name_edit[]"]')?.value.trim();
+                    const birthDate = form.querySelector('input[name="member_birth_date_edit[]"]')?.value;
+                    const gender = form.querySelector('select[name="member_gender_edit[]"]')?.value;
+                    const contact = form.querySelector('input[name="member_contact_edit[]"]')?.value.trim();
+                    const email = form.querySelector('input[name="member_email_edit[]"]')?.value.trim();
+                    const age = form.querySelector('input[name="member_age_edit[]"]')?.value;
+
+                    if (firstName && lastName && birthDate && gender) {
+                        memberOperations.add.push({
+                            first_name: firstName,
+                            middle_name: middleName || '',
+                            last_name: lastName,
+                            birth_date: birthDate,
+                            gender: gender,
+                            age: age ? parseInt(age) : calculateAge(birthDate),
+                            contact_no: contact || '',
+                            email: email || ''
+                        });
+                    }
+                });
+
                 const submitBtn = this.querySelector('button[type="submit"]');
                 const originalText = submitBtn.innerHTML;
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Updating...';
 
                 try {
-                    const response = await fetch(API_URL + '?action=update', {
+                    const response = await fetch(API_URL + '?action=updateWithMembers', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -362,7 +856,8 @@
                             family_no: parseInt(family_no),
                             full_name: full_name,
                             address: address,
-                            income: income ? parseFloat(income) : 0.00
+                            income: income ? parseFloat(income) : 0.00,
+                            memberOperations: memberOperations
                         })
                     });
 
@@ -481,7 +976,7 @@
             });
 
             /**
-             * Handle Edit Button Click - Populate Update Modal
+             * Handle Edit Button Click - Populate Update Modal and Load Members
              */
             document.addEventListener('click', function(e) {
                 if (e.target.closest('button[data-bs-target="#updateHouseholdModal"]')) {
@@ -498,6 +993,9 @@
                     document.getElementById('full_name_edit').value = full_name;
                     document.getElementById('address_edit').value = address;
                     document.getElementById('income_edit').value = parseFloat(income.replace(/,/g, ''));
+                    
+                    // Load existing members
+                    loadExistingMembers(householdId);
                 }
 
                 if (e.target.closest('button[data-bs-target="#deleteHouseholdModal"]')) {
@@ -515,14 +1013,95 @@
              */
             document.getElementById('createHouseholdModal').addEventListener('hide.bs.modal', function() {
                 document.getElementById('createHouseholdForm').reset();
+                document.getElementById('membersContainer').innerHTML = '';
+                memberCount = 0;
             });
 
             document.getElementById('updateHouseholdModal').addEventListener('hide.bs.modal', function() {
                 document.getElementById('updateHouseholdForm').reset();
+                document.getElementById('membersContainerEdit').innerHTML = '<div class="text-center py-3" id="loadingMembersEdit"><div class="spinner-border spinner-border-sm text-primary" role="status"><span class="visually-hidden">Loading members...</span></div></div>';
+                editMemberCount = 0;
             });
 
             document.getElementById('deleteHouseholdModal').addEventListener('hide.bs.modal', function() {
                 document.getElementById('deleteHouseholdForm').reset();
+            });
+
+            /**
+             * Handle View Members Button Click
+             */
+            document.addEventListener('click', async function(e) {
+                if (e.target.closest('.view-members-btn')) {
+                    const btn = e.target.closest('.view-members-btn');
+                    const householdId = btn.getAttribute('data-household-id');
+                    const householdName = btn.getAttribute('data-household-name');
+
+                    // Set modal title
+                    document.getElementById('modalHouseholdName').textContent = householdName;
+
+                    // Show modal
+                    const modal = new bootstrap.Modal(document.getElementById('viewMembersModal'));
+                    modal.show();
+
+                    // Show loading state
+                    document.getElementById('membersLoadingSpinner').style.display = 'block';
+                    document.getElementById('membersContent').style.display = 'none';
+
+                    try {
+                        const response = await fetch(API_URL + `?action=getMembers&household_id=${householdId}`);
+                        const result = await response.json();
+
+                        if (result.success && result.data && result.data.length > 0) {
+                            // Populate members table
+                            const tbody = document.getElementById('membersTableBody');
+                            tbody.innerHTML = '';
+
+                            result.data.forEach(member => {
+                                const row = `
+                                    <tr>
+                                        <td>${member.resident_id}</td>
+                                        <td>${member.first_name} ${member.middle_name || ''} ${member.last_name}</td>
+                                        <td>${member.birth_date}</td>
+                                        <td>${member.age || 'N/A'}</td>
+                                        <td>${member.gender}</td>
+                                        <td>${member.contact_no || 'N/A'}</td>
+                                        <td>${member.email || 'N/A'}</td>
+                                    </tr>
+                                `;
+                                tbody.insertAdjacentHTML('beforeend', row);
+                            });
+
+                            document.getElementById('noMembersMessage').style.display = 'none';
+                        } else {
+                            // Show no members message
+                            document.getElementById('membersTableBody').innerHTML = '';
+                            document.getElementById('noMembersMessage').style.display = 'block';
+                        }
+
+                        // Hide loading, show content
+                        document.getElementById('membersLoadingSpinner').style.display = 'none';
+                        document.getElementById('membersContent').style.display = 'block';
+
+                    } catch (error) {
+                        console.error('Error:', error);
+                        document.getElementById('membersLoadingSpinner').style.display = 'none';
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to load household members.',
+                            confirmButtonColor: '#dc3545'
+                        });
+                        modal.hide();
+                    }
+                }
+            });
+
+            /**
+             * Clear member list when modal closes
+             */
+            document.getElementById('viewMembersModal').addEventListener('hide.bs.modal', function() {
+                document.getElementById('membersTableBody').innerHTML = '';
+                document.getElementById('noMembersMessage').style.display = 'none';
             });
         </script>
     </body>

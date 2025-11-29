@@ -212,6 +212,62 @@ class Resident {
             ];
         }
     }
+
+    /**
+     * Create a resident with specific parameters (used by Household operations)
+     */
+    public function createResident($household_id, $first_name, $middle_name, $last_name, $birth_date, $gender, $contact_no = '', $email = '') {
+        // Calculate age from birth date
+        $age = 0;
+        if ($birth_date) {
+            $birthDate = new DateTime($birth_date);
+            $today = new DateTime();
+            $age = $today->diff($birthDate)->y;
+        }
+
+        return $this->create([
+            'household_id' => $household_id,
+            'first_name' => $first_name,
+            'middle_name' => $middle_name,
+            'last_name' => $last_name,
+            'birth_date' => $birth_date,
+            'gender' => $gender,
+            'age' => $age,
+            'contact_no' => $contact_no,
+            'email' => $email
+        ]);
+    }
+
+    /**
+     * Update a resident with specific parameters (used by Household operations)
+     */
+    public function updateResident($resident_id, $first_name, $middle_name, $last_name, $birth_date, $gender, $contact_no = '', $email = '') {
+        // Calculate age from birth date
+        $age = 0;
+        if ($birth_date) {
+            $birthDate = new DateTime($birth_date);
+            $today = new DateTime();
+            $age = $today->diff($birthDate)->y;
+        }
+
+        return $this->update($resident_id, [
+            'first_name' => $first_name,
+            'middle_name' => $middle_name,
+            'last_name' => $last_name,
+            'birth_date' => $birth_date,
+            'gender' => $gender,
+            'age' => $age,
+            'contact_no' => $contact_no,
+            'email' => $email
+        ]);
+    }
+
+    /**
+     * Delete a resident (used by Household operations)
+     */
+    public function deleteResident($resident_id) {
+        return $this->delete($resident_id);
+    }
 }
 
 ?>

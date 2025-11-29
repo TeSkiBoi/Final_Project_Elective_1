@@ -235,5 +235,223 @@ class Household {
             ];
         }
     }
+
+    /**
+     * Create household with members in a single transaction
+     */
+    public function createWithMembers($family_no, $full_name, $address, $income = 0.00, $members = []) {
+        try {
+            // Start transaction
+            $this->connection->begin_transaction();
+
+            // Validate required fields
+            if (empty($family_no) || empty($full_name) || empty($address)) {
+                throw new Exception('Family No, Full Name, and Address are required');
+            }
+
+            // Check if family_no already exists
+            $checkQuery = "SELECT household_id FROM " . $this->table . " WHERE family_no = ? LIMIT 1";
+            $checkStmt = $this->connection->prepare($checkQuery);
+            $checkStmt->bind_param('i', $family_no);
+            $checkStmt->execute();
+            $checkResult = $checkStmt->get_result();
+            
+            if ($checkResult->num_rows > 0) {
+                throw new Exception('Family No already exists');
+            }
+
+            // Generate household ID
+            $household_id = $this->generateNextId();
+
+            // Insert household
+            $query = "INSERT INTO " . $this->table . " (household_id, family_no, full_name, address, income) VALUES (?, ?, ?, ?, ?)";
+            $stmt = $this->connection->prepare($query);
+            
+            if (!$stmt) {
+                throw new Exception('Error preparing household statement: ' . $this->connection->error);
+            }
+            
+            $stmt->bind_param('sissd', $household_id, $family_no, $full_name, $address, $income);
+            
+            if (!$stmt->execute()) {
+                throw new Exception('Error creating household: ' . $stmt->error);
+            }
+
+            // Insert members if provided
+            $membersCreated = 0;
+            if (!empty($members) && is_array($members)) {
+                require_once __DIR__ . '/Resident.php';
+                $residentModel = new Resident();
+
+                foreach ($members as $member) {
+                    // Skip empty members
+                    if (empty($member['first_name']) || empty($member['last_name'])) {
+                        continue;
+                    }
+
+                    $memberData = [
+                        'household_id' => $household_id,
+                        'first_name' => $member['first_name'],
+                        'middle_name' => $member['middle_name'] ?? '',
+                        'last_name' => $member['last_name'],
+                        'birth_date' => $member['birth_date'] ?? null,
+                        'gender' => $member['gender'] ?? '',
+                        'age' => $member['age'] ?? 0,
+                        'contact_no' => $member['contact_no'] ?? '',
+                        'email' => $member['email'] ?? ''
+                    ];
+
+                    $result = $residentModel->create($memberData);
+                    if ($result['success']) {
+                        $membersCreated++;
+                    } else {
+                        throw new Exception('Error creating member: ' . $result['message']);
+                    }
+                }
+            }
+
+            // Commit transaction
+            $this->connection->commit();
+
+            return [
+                'success' => true,
+                'message' => 'Household created successfully with ' . $membersCreated . ' member(s)!',
+                'household_id' => $household_id,
+                'members_created' => $membersCreated
+            ];
+
+        } catch (Exception $e) {
+            // Rollback on error
+            $this->connection->rollback();
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'error_type' => 'exception'
+            ];
+        }
+    }
+
+    /**
+     * Get all members of a household
+     */
+    public function getMembers($household_id) {
+        $query = "SELECT r.resident_id, r.first_name, r.middle_name, r.last_name, r.birth_date, r.gender, r.age, r.contact_no, r.email 
+                  FROM residents r 
+                  WHERE r.household_id = ? 
+                  ORDER BY r.age DESC";
+        $stmt = $this->connection->prepare($query);
+        
+        if (!$stmt) {
+            return [];
+        }
+        
+        $stmt->bind_param('s', $household_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $members = [];
+        while ($row = $result->fetch_assoc()) {
+            $members[] = $row;
+        }
+
+        return $members;
+    }
+
+    /**
+     * Update household with member management (add/update/delete members)
+     */
+    public function updateWithMembers($household_id, $family_no, $full_name, $address, $income = 0.00, $memberOperations = []) {
+        require_once __DIR__ . '/Resident.php';
+        
+        try {
+            // Start transaction
+            $this->connection->begin_transaction();
+
+            // Update household info
+            $updateResult = $this->update($household_id, $family_no, $full_name, $address, $income);
+            if (!$updateResult['success']) {
+                throw new Exception($updateResult['message']);
+            }
+
+            $residentModel = new Resident();
+            $operationsSummary = [
+                'updated' => 0,
+                'added' => 0,
+                'deleted' => 0
+            ];
+
+            // Process member operations
+            if (isset($memberOperations['delete']) && !empty($memberOperations['delete'])) {
+                foreach ($memberOperations['delete'] as $residentId) {
+                    $deleteResult = $residentModel->deleteResident($residentId);
+                    if ($deleteResult['success']) {
+                        $operationsSummary['deleted']++;
+                    }
+                }
+            }
+
+            if (isset($memberOperations['update']) && !empty($memberOperations['update'])) {
+                foreach ($memberOperations['update'] as $memberData) {
+                    $updateResult = $residentModel->updateResident(
+                        $memberData['resident_id'],
+                        $memberData['first_name'],
+                        $memberData['middle_name'],
+                        $memberData['last_name'],
+                        $memberData['birth_date'],
+                        $memberData['gender'],
+                        $memberData['contact_no'],
+                        $memberData['email']
+                    );
+                    if ($updateResult['success']) {
+                        $operationsSummary['updated']++;
+                    }
+                }
+            }
+
+            if (isset($memberOperations['add']) && !empty($memberOperations['add'])) {
+                foreach ($memberOperations['add'] as $memberData) {
+                    $createResult = $residentModel->createResident(
+                        $household_id,
+                        $memberData['first_name'],
+                        $memberData['middle_name'],
+                        $memberData['last_name'],
+                        $memberData['birth_date'],
+                        $memberData['gender'],
+                        $memberData['contact_no'],
+                        $memberData['email']
+                    );
+                    if ($createResult['success']) {
+                        $operationsSummary['added']++;
+                    }
+                }
+            }
+
+            // Commit transaction
+            $this->connection->commit();
+
+            $message = "Household updated successfully.";
+            $details = [];
+            if ($operationsSummary['added'] > 0) $details[] = "{$operationsSummary['added']} member(s) added";
+            if ($operationsSummary['updated'] > 0) $details[] = "{$operationsSummary['updated']} member(s) updated";
+            if ($operationsSummary['deleted'] > 0) $details[] = "{$operationsSummary['deleted']} member(s) removed";
+            
+            if (!empty($details)) {
+                $message .= " " . implode(", ", $details) . ".";
+            }
+
+            return [
+                'success' => true,
+                'message' => $message,
+                'operations' => $operationsSummary
+            ];
+
+        } catch (Exception $e) {
+            $this->connection->rollback();
+            return [
+                'success' => false,
+                'message' => $e->getMessage()
+            ];
+        }
+    }
 }
 ?>

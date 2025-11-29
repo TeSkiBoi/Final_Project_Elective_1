@@ -40,9 +40,14 @@
                                 </ol>
                             </div>
                             <div>
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createResidentModal">
-                                    <i class="fas fa-plus"></i> Add New Resident
-                                </button>
+                                <!-- Add New Resident button removed - Residents are now added through Household creation -->
+                                <div class="alert alert-info py-2 px-3 mb-0" style="font-size: 0.9rem;">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    To add residents, please create or update a household with its members.
+                                    <a href="household.php" class="alert-link ms-2">
+                                        <i class="fas fa-arrow-right me-1"></i>Go to Households
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         <div class="card mb-4">
