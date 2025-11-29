@@ -17,10 +17,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Biga Santa Cruz Marinduque - Excellence in Education">
+    <meta name="description" content="Barangay Biga Management System - Digital Solutions for Community Governance">
     <meta name="theme-color" content="#6ec207">
-    <title>Biga Santa cruz Marinduque</title>
+    <title>Barangay Biga Management System | Santa Cruz, Marinduque</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <style>
         :root {
             --apple-green: #6ec207;
@@ -124,7 +125,8 @@
             <a class="navbar-brand d-flex align-items-center" href="#">
                 <img src="assets/img/BIGA-LOGO.png" alt="BIGA Logo" height="55" class="me-3">
                 <div class="d-flex flex-column">
-                    <span class="h6 mb-0 text-primary fw-bold">BIGA SANTA CRUZ MARINDUQUE</span>
+                <span class="h6 mb-0 fw-bold text-white">BARANGAY BIGA</span>
+                    <small class="text-white fw-semibold">Santa Cruz, Marinduque</small>
                 </div>
             </a>
             
@@ -144,11 +146,11 @@
                             About
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
-                            <li><a class="dropdown-item" href="#about"><i class="bi bi-building me-2"></i>University Overview</a></li>
-                            <li><a class="dropdown-item" href="#mission"><i class="bi bi-bullseye me-2"></i>Mission & Vision</a></li>
-                            <li><a class="dropdown-item" href="#history"><i class="bi bi-clock-history me-2"></i>History</a></li>
+                            <li><a class="dropdown-item" href="#about"><i class="bi bi-info-circle me-2"></i>Barangay Overview</a></li>
+                            <li><a class="dropdown-item" href="#about"><i class="bi bi-bullseye me-2"></i>Mission & Vision</a></li>
+                            <li><a class="dropdown-item" href="#services"><i class="bi bi-briefcase me-2"></i>Services</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#leadership"><i class="bi bi-people-fill me-2"></i>Leadership</a></li>
+                            <li><a class="dropdown-item" href="#contact"><i class="bi bi-people-fill me-2"></i>Officials</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -240,27 +242,33 @@
                 <div class="carousel-item active" style="background-image: url('assets/img/biga1.jpg'); background-position: center 30%;">
                     <div class="carousel-content d-flex align-items-center h-100">
                         <div class="container text-center">
-                            <h1 class="display-2 fw-bold mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Welcome to BIGA MANAGEMENT SYSTEM</h1>
-                            <p class="lead mb-4" style="font-size: 1.5rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">Excellence, Innovation, and Service for Sustainable Development</p>
-                            <button class="btn btn-outline-light btn-lg px-4 py-2" style="font-weight: 600;" data-bs-toggle="modal" data-bs-target="#loginModal">Student Portal</button>
+                            <h1 class="display-2 fw-bold mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Barangay Management System</h1>
+                            <p class="lead mb-4" style="font-size: 1.5rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">Empowering Community Governance Through Technology</p>
+                            <button class="btn btn-outline-light btn-lg px-5 py-3" style="font-weight: 600;" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Access Portal
+                            </button>
                         </div>
                     </div>
                 </div>
                 <div class="carousel-item" style="background-image: url('assets/img/bigamap.jpg'); background-position: center center;">
                     <div class="carousel-content d-flex align-items-center h-100">
                         <div class="container text-center">
-                            <h1 class="display-2 fw-bold mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Innovate. Inspire. Impact.</h1>
-                            <p class="lead mb-4" style="font-size: 1.5rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">Join our vibrant community of innovators and future leaders</p>
-                            <button class="btn btn-outline-light btn-lg px-4 py-2" style="font-weight: 600;">Learn More</button>
+                            <h1 class="display-2 fw-bold mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Serving Barangay Biga</h1>
+                            <p class="lead mb-4" style="font-size: 1.5rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">Digital solutions for efficient barangay administration and services</p>
+                            <button class="btn btn-outline-light btn-lg px-5 py-3" style="font-weight: 600;" onclick="document.getElementById('about').scrollIntoView({behavior: 'smooth'});">
+                                <i class="bi bi-info-circle me-2"></i>Learn More
+                            </button>
                         </div>
                     </div>
                 </div>
                 <div class="carousel-item" style="background-image: url('assets/img/brgyofice.jpg'); background-position: center 40%;">
                     <div class="carousel-content d-flex align-items-center h-100">
                         <div class="container text-center">
-                            <h1 class="display-2 fw-bold mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Shape Your Future</h1>
-                            <p class="lead mb-4" style="font-size: 1.5rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">Discover endless possibilities with our diverse academic programs</p>
-                            <button class="btn btn-outline-light btn-lg px-4 py-2" style="font-weight: 600;">Apply Now</button>
+                            <h1 class="display-2 fw-bold mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">Transparent Governance</h1>
+                            <p class="lead mb-4" style="font-size: 1.5rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">Building trust through accessible information and streamlined processes</p>
+                            <button class="btn btn-outline-light btn-lg px-5 py-3" style="font-weight: 600;" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'});">
+                                <i class="bi bi-telephone me-2"></i>Contact Us
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -345,21 +353,21 @@
     <section id="about" class="py-5 bg-light">
         <div class="container">
             <div class="text-center mb-5">
-                <h1 class="text-center fw-bold mb-5">About BMS</h1>
+                <h1 class="fw-bold mb-3">About Barangay Management System</h1>
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
-                        <p class="lead text-muted">Marinduque State University is committed to providing quality education and fostering innovation in the heart of Marinduque.</p>
+                        <p class="lead text-muted">Modernizing barangay operations through digital transformation, making government services more accessible and efficient for all residents of Barangay Biga, Santa Cruz, Marinduque.</p>
                     </div>
                 </div>
             </div>
             
             <div class="row g-4 align-items-center">
                 <div class="col-lg-6">
-                    <div class="position-relative rounded-4 overflow-hidden">
-                        <img src="assets/img/brgy2.jpg" alt="Campus Life" class="img-fluid rounded-4 shadow-lg" style="width: 100%; height: 400px; object-fit: cover;">
-                        <div class="position-absolute bottom-0 start-0 w-100 p-4" style="background: linear-gradient(transparent, rgba(0,0,0,0.8));">
-                            <h3 class="text-white mb-2">Our Mission</h3>
-                            <p class="text-white mb-0">Developing globally competitive graduates while preserving our cultural heritage.</p>
+                    <div class="position-relative rounded-4 overflow-hidden shadow-lg">
+                        <img src="assets/img/brgy2.jpg" alt="Barangay Office" class="img-fluid rounded-4" style="width: 100%; height: 400px; object-fit: cover;">
+                        <div class="position-absolute bottom-0 start-0 w-100 p-4" style="background: linear-gradient(transparent, rgba(110, 194, 7, 0.9));">
+                            <h3 class="text-white mb-2 fw-bold">Our Mission</h3>
+                            <p class="text-white mb-0">To provide efficient, transparent, and accessible barangay services through innovative technology while fostering community development and engagement.</p>
                         </div>
                     </div>
                 </div>
@@ -369,10 +377,10 @@
                             <div class="card h-100 border-0 rounded-4 shadow-sm hover-shadow" style="transition: all 0.3s ease;">
                                 <div class="card-body text-center p-4">
                                     <div class="mb-3">
-                                        <i class="bi bi-people" style="font-size: 2.5rem;"></i>
+                                        <i class="bi bi-people-fill text-success" style="font-size: 2.5rem;"></i>
                                     </div>
-                                    <h3 class="h2 fw-bold mb-2">370+</h3>
-                                    <p class="text-muted mb-0">Residents</p>
+                                    <h3 class="h2 fw-bold mb-2 text-success">370+</h3>
+                                    <p class="text-muted mb-0 fw-semibold">Residents</p>
                                 </div>
                             </div>
                         </div>
@@ -380,10 +388,10 @@
                             <div class="card h-100 border-0 rounded-4 shadow-sm hover-shadow" style="transition: all 0.3s ease;">
                                 <div class="card-body text-center p-4">
                                     <div class="mb-3">
-                                        <i class="bi bi-person-wheelchair" style="font-size: 2.5rem;"></i>
+                                        <i class="bi bi-house-door text-dark" style="font-size: 2.5rem;"></i>
                                     </div>
-                                    <h3 class="h2 fw-bold mb-2">200+</h3>
-                                    <p class="text-muted mb-0">Senior Citizens</p>
+                                    <h3 class="h2 fw-bold mb-2 text-dark">150+</h3>
+                                    <p class="text-muted mb-0 fw-semibold">Households</p>
                                 </div>
                             </div>
                         </div>
@@ -391,10 +399,10 @@
                             <div class="card h-100 border-0 rounded-4 shadow-sm hover-shadow" style="transition: all 0.3s ease;">
                                 <div class="card-body text-center p-4">
                                     <div class="mb-3">
-                                        <i class="bi bi-book-fill" style="font-size: 2.5rem;"></i>
+                                        <img src="assets/img/icons/person-wheelchair.svg" alt="Wheelchair Icon" width="40" height="40" style="filter: brightness(0);">
                                     </div>
-                                    <h3 class="h2 fw-bold mb-2">30+</h3>
-                                    <p class="text-muted mb-0">Childrens</p>
+                                    <h3 class="h2 fw-bold mb-2 text-warning">80+</h3>
+                                    <p class="text-muted mb-0 fw-semibold">Senior Citizens</p>
                                 </div>
                             </div>
                         </div>
@@ -402,12 +410,180 @@
                             <div class="card h-100 border-0 rounded-4 shadow-sm hover-shadow" style="transition: all 0.3s ease;">
                                 <div class="card-body text-center p-4">
                                     <div class="mb-3">
-                                        <i class="bi bi-book-fill" style="font-size: 2.5rem;"></i>
+                                        <i class="bi bi-people text-info" style="font-size: 2.5rem;"></i>
                                     </div>
-                                    <h3 class="h2 fw-bold mb-2">30+</h3>
-                                    <p class="text-muted mb-0">Teenagers</p>
+                                    <h3 class="h2 fw-bold mb-2 text-info">120+</h3>
+                                    <p class="text-muted mb-0 fw-semibold">Youth & Children</p>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-5 bg-white">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold display-5 mb-3">Barangay Services</h2>
+                <p class="lead text-muted">Accessible and efficient services for all residents</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="bi bi-file-earmark-text-fill text-success" style="font-size: 3rem;"></i>
+                            </div>
+                            <h5 class="fw-bold mb-3">Barangay Clearance</h5>
+                            <p class="text-muted">Request and process barangay clearance certificates online for various purposes</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="bi bi-person-plus-fill text-dark" style="font-size: 3rem;"></i>
+                            </div>
+                            <h5 class="fw-bold mb-3">Resident Registration</h5>
+                            <p class="text-muted">Register as a resident and maintain updated information in our database</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="bi bi-shield-fill-exclamation text-danger" style="font-size: 3rem;"></i>
+                            </div>
+                            <h5 class="fw-bold mb-3">Incident Reporting</h5>
+                            <p class="text-muted">Report incidents and emergencies directly to barangay officials</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="bi bi-house-fill text-warning" style="font-size: 3rem;"></i>
+                            </div>
+                            <h5 class="fw-bold mb-3">Household Management</h5>
+                            <p class="text-muted">Manage household information and track family members efficiently</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="bi bi-megaphone-fill text-info" style="font-size: 3rem;"></i>
+                            </div>
+                            <h5 class="fw-bold mb-3">Announcements</h5>
+                            <p class="text-muted">Stay updated with the latest barangay news, events, and announcements</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                <i class="bi bi-cash-stack text-success" style="font-size: 3rem;"></i>
+                            </div>
+                            <h5 class="fw-bold mb-3">Financial Tracking</h5>
+                            <p class="text-muted">Transparent budget allocation and expense monitoring system</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold display-5 mb-3">System Features</h2>
+                <p class="lead text-muted">Advanced tools for modern barangay administration</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-speedometer2 text-success" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="fw-bold">Real-time Dashboard</h5>
+                            <p class="text-muted mb-0">Monitor barangay statistics, population demographics, and key metrics at a glance with interactive charts and graphs.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-shield-lock-fill text-primary" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="fw-bold">Secure Data Management</h5>
+                            <p class="text-muted mb-0">Protected resident information with role-based access control ensuring data privacy and security compliance.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-graph-up-arrow text-warning" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="fw-bold">Analytics & Reports</h5>
+                            <p class="text-muted mb-0">Generate comprehensive reports on demographics, incidents, and financial data for informed decision-making.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <div class="bg-info bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-phone-fill text-info" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="fw-bold">Mobile Responsive</h5>
+                            <p class="text-muted mb-0">Access the system anytime, anywhere on any device with fully responsive design optimized for all screen sizes.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <div class="bg-danger bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-bell-fill text-danger" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="fw-bold">Alert System</h5>
+                            <p class="text-muted mb-0">Instant notifications for emergencies, announcements, and important updates to keep everyone informed.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-check-circle-fill text-success" style="font-size: 2rem;"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="fw-bold">Easy to Use</h5>
+                            <p class="text-muted mb-0">Intuitive interface designed for users of all technical levels, making barangay management simple and efficient.</p>
                         </div>
                     </div>
                 </div>
@@ -419,6 +595,13 @@
     .hover-shadow:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+    }
+    .hover-card {
+        transition: all 0.3s ease;
+    }
+    .hover-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(110, 194, 7, 0.2) !important;
     }
     @media (max-width: 768px) {
         .about-img {
@@ -437,9 +620,9 @@
                 <div class="modal-header border-0 flex-column">
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     <div class="text-center w-100 pb-3">
-                        <img src="assets/img/BIGA-LOGO.png" alt="BMS Logo" class="mb-3" style="height: 150px;">
+                        <img src="assets/img/BIGA-LOGO.png" alt="Barangay Biga Logo" class="mb-3" style="height: 150px;">
                         <h4 class="modal-title fw-bold text-primary">Welcome Back!</h4>
-                        <p class="text-muted">Login to access your BMS Portal</p>
+                        <p class="text-muted">Login to access Barangay Management System</p>
                     </div>
                 </div>
                 <div class="modal-body px-4">
@@ -449,7 +632,7 @@
                             <label for="username" class="form-label">Username</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0">
-                                    <i class="bi bi-person-fill text-primary"></i>
+                                    <i class="bi bi-person-fill text-dark"></i>
                                 </span>
                                 <input type="text" class="form-control border-start-0" id="username" required
                                     placeholder="Enter your username">
@@ -460,7 +643,7 @@
                             <label for="password" class="form-label">Password</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0">
-                                    <i class="bi bi-lock-fill text-primary"></i>
+                                    <i class="bi bi-lock-fill text-dark"></i>
                                 </span>
                                 <input type="password" class="form-control border-start-0" id="password" required
                                     placeholder="Enter your password">
@@ -486,9 +669,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Add Bootstrap Icons CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 
     <script src="js/bootstrap.bundle.min.js"></script>
     <script>
@@ -639,32 +819,6 @@
                 passwordInput.type = 'password';
             }
         });
-
-        // Latest Highlights Carousel Controls
-        document.addEventListener('DOMContentLoaded', function() {
-            const highlightsCarousel = new bootstrap.Carousel(document.getElementById('highlightsCarousel'), {
-                interval: 5000,
-                wrap: true
-            });
-
-            // Custom navigation buttons
-            document.querySelector('.highlights-prev').addEventListener('click', () => {
-                highlightsCarousel.prev();
-            });
-
-            document.querySelector('.highlights-next').addEventListener('click', () => {
-                highlightsCarousel.next();
-            });
-
-            // Add hover pause functionality
-            const carousel = document.getElementById('highlightsCarousel');
-            carousel.addEventListener('mouseenter', () => {
-                highlightsCarousel.pause();
-            });
-            carousel.addEventListener('mouseleave', () => {
-                highlightsCarousel.cycle();
-            });
-        });
     </script>
 
      <script>
@@ -706,36 +860,93 @@
     <footer class="text-light py-5 bg-dark" id="contact">
         <div class="container">
             <div class="row">
-                <div class="col-md-4 mb-4">
-                    <h5 class="text-light fw-bold">Contact Us</h5>
-                    <p>Tanza, Boac, Marinduque<br>
-                    Phone: (042) 332-2028<br>
-                    Email: info@marinduquestateu.edu.ph</p>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <h5 class="text-muted fw-bold">Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-light">Student Portal</a></li>
-                        <li><a href="#" class="text-light">Faculty Portal</a></li>
-                        <li><a href="#" class="text-light">Library</a></li>
-                        <li><a href="#" class="text-light">Research</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <h5 class="text-muted fw-bold">Follow Us</h5>
-                    <div class="d-flex gap-3">
-                        <a href="#" class="text-light"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="text-light"><i class="bi bi-twitter"></i></a>
-                        <a href="#" class="text-light"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="text-light"><i class="bi bi-youtube"></i></a>
+                <div class="col-lg-4 mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="assets/img/BIGA-LOGO.png" alt="Barangay Biga Logo" height="60" class="me-3">
+                        <div>
+                            <h5 class="text-white fw-bold mb-0">Barangay Biga</h5>
+                            <small class="text-white-50">Santa Cruz, Marinduque</small>
+                        </div>
+                    </div>
+                    <p class="text-white-50">Empowering our community through innovative digital solutions and transparent governance.</p>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width: 40px; height: 40px; padding: 0; line-height: 40px;">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width: 40px; height: 40px; padding: 0; line-height: 40px;">
+                            <i class="bi bi-twitter"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width: 40px; height: 40px; padding: 0; line-height: 40px;">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a href="#" class="btn btn-outline-light btn-sm rounded-circle" style="width: 40px; height: 40px; padding: 0; line-height: 40px;">
+                            <i class="bi bi-envelope"></i>
+                        </a>
                     </div>
                 </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="text-white fw-bold mb-3">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none hover-link"><i class="bi bi-chevron-right me-2"></i>Home</a></li>
+                        <li class="mb-2"><a href="#about" class="text-white-50 text-decoration-none hover-link"><i class="bi bi-chevron-right me-2"></i>About Us</a></li>
+                        <li class="mb-2"><a href="#services" class="text-white-50 text-decoration-none hover-link"><i class="bi bi-chevron-right me-2"></i>Services</a></li>
+                        <li class="mb-2"><a href="#contact" class="text-white-50 text-decoration-none hover-link"><i class="bi bi-chevron-right me-2"></i>Contact</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none hover-link" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="bi bi-chevron-right me-2"></i>Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5 class="text-white fw-bold mb-3">Services</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none hover-link"><i class="bi bi-chevron-right me-2"></i>Clearance</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none hover-link"><i class="bi bi-chevron-right me-2"></i>Registration</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none hover-link"><i class="bi bi-chevron-right me-2"></i>Incidents</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none hover-link"><i class="bi bi-chevron-right me-2"></i>Reports</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="text-white fw-bold mb-3">Contact Info</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <i class="bi bi-geo-alt-fill text-success me-2"></i>
+                            <span class="text-white-50">Barangay Biga<br>Santa Cruz, Marinduque</span>
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-telephone-fill text-success me-2"></i>
+                            <span class="text-white-50">(042) 123-4567</span>
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-envelope-fill text-success me-2"></i>
+                            <span class="text-white-50">barangaybiga@gmail.com</span>
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-clock-fill text-success me-2"></i>
+                            <span class="text-white-50">Mon - Fri: 8:00 AM - 5:00 PM</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <hr class="my-4">
-            <div class="text-center text-muted fw-bold">
-                <p class="mb-0">&copy; 2025 Marinduque State University. All rights reserved.</p>
+            <hr class="my-4 bg-secondary">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0 text-white-50">&copy; 2025 Barangay Biga Management System. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <a href="#" class="text-white-50 text-decoration-none me-3 hover-link">Privacy Policy</a>
+                    <a href="#" class="text-white-50 text-decoration-none me-3 hover-link">Terms of Service</a>
+                    <a href="#" class="text-white-50 text-decoration-none hover-link">Help Center</a>
+                </div>
             </div>
         </div>
     </footer>
+
+    <style>
+        .hover-link {
+            transition: all 0.3s ease;
+        }
+        .hover-link:hover {
+            color: var(--apple-green) !important;
+            transform: translateX(5px);
+        }
+    </style>
 </body>
 </html>

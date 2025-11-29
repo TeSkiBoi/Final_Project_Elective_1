@@ -19,7 +19,7 @@
                         Records
                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
-                    <div class="collapse" id="collapseFeatures2" data-bs-parent="#sidenavAccordion">
+                    <div class="collapse" id="collapseFeatures2">
                         <nav class="sb-sidenav-menu-nested nav">
                             <a class="nav-link" href="household.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-file-signature"></i></div>
@@ -66,7 +66,7 @@
                         Features
                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
-                    <div class="collapse" id="collapseFeatures" data-bs-parent="#sidenavAccordion">
+                    <div class="collapse" id="collapseFeatures">
                         <nav class="sb-sidenav-menu-nested nav">
                             <a class="nav-link" href="certificate_generator.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-file-signature"></i></div>
@@ -103,7 +103,7 @@
                         Maintenance
                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-chevron-down"></i></div>
                     </a>
-                    <div class="collapse" id="collapseMaintenanceAdmin" data-bs-parent="#sidenavAccordion">
+                    <div class="collapse" id="collapseMaintenanceAdmin">
                         <nav class="sb-sidenav-menu-nested nav">
                             <a class="nav-link" href="user.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>

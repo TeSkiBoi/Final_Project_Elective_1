@@ -15,22 +15,22 @@
         $db = new Database();
         $connection = $db->connect();
         
-        // Fetch seniors from view (ages 60+)
+        // Fetch seniors from residents table (ages 60+)
         $query = "SELECT 
-                    r.id AS person_id,
-                    SUBSTRING_INDEX(r.full_name, ' ', 1) AS first_name,
-                    SUBSTRING_INDEX(SUBSTRING_INDEX(r.full_name, ' ', 2), ' ', -1) AS middle_name,
-                    SUBSTRING_INDEX(r.full_name, ' ', -1) AS last_name,
-                    r.birthdate,
-                    r.gender,
-                    FLOOR(DATEDIFF(CURDATE(), r.birthdate)/365) AS age,
+                    r.resident_id,
+                    r.first_name,
+                    r.middle_name,
+                    r.last_name,
+                    r.age,
+                    r.contact_no,
+                    r.email,
                     r.household_id,
-                    h.household_no,
-                    r.relation_to_head
+                    h.family_no,
+                    h.full_name as household_head
                   FROM residents r
                   LEFT JOIN households h ON r.household_id = h.household_id
-                  WHERE FLOOR(DATEDIFF(CURDATE(), r.birthdate)/365) >= 60
-                  ORDER BY r.full_name ASC";
+                  WHERE r.age >= 60
+                  ORDER BY r.last_name ASC, r.first_name ASC";
         $result = $connection->query($query);
         $seniors = [];
         if ($result) {
@@ -60,14 +60,14 @@
                             <div>
                                 <h1 class="mt-4">Senior Citizens</h1>
                                 <ol class="breadcrumb mb-4">
-                                    <li class="breadcrumb-item"><a href="dashboard.html">Dashboard</a></li>
+                                    <li class="breadcrumb-item"><a href="index.php">Dashboard</a></li>
                                     <li class="breadcrumb-item active">Senior Citizens</li>
                                 </ol>
                             </div>
                             <div>
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createSeniorModal">
-                                    <i class="fas fa-plus"></i> Add New Senior
-                                </button>
+                                <a href="Resident.php" class="btn btn-primary">
+                                    <i class="fas fa-users"></i> Manage Residents
+                                </a>
                             </div>
                         </div>
                         <div class="card mb-4">
@@ -81,15 +81,15 @@
                                 <table id="table" class="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th>Person ID</th>
+                                            <th>Resident ID</th>
                                             <th>First Name</th>
                                             <th>Middle Name</th>
                                             <th>Last Name</th>
-                                            <th>Birthdate</th>
-                                            <th>Gender</th>
                                             <th>Age</th>
-                                            <th>Household No</th>
-                                            <th>Relation to Head</th>
+                                            <th>Contact No</th>
+                                            <th>Email</th>
+                                            <th>Family No</th>
+                                            <th>Household Head</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -97,34 +97,19 @@
                                         <?php if ($seniors && count($seniors) > 0): ?>
                                             <?php foreach ($seniors as $senior): ?>
                                                 <tr data-household-id="<?php echo htmlspecialchars($senior['household_id']); ?>">
-                                                    <td><?php echo htmlspecialchars($senior['person_id']); ?></td>
+                                                    <td><?php echo htmlspecialchars($senior['resident_id']); ?></td>
                                                     <td><?php echo htmlspecialchars($senior['first_name']); ?></td>
-                                                    <td><?php echo htmlspecialchars($senior['middle_name'] ?? ''); ?></td>
+                                                    <td><?php echo htmlspecialchars($senior['middle_name'] ?? 'N/A'); ?></td>
                                                     <td><?php echo htmlspecialchars($senior['last_name']); ?></td>
-                                                    <td><?php echo htmlspecialchars($senior['birthdate']); ?></td>
-                                                    <td><?php echo htmlspecialchars($senior['gender']); ?></td>
                                                     <td><?php echo htmlspecialchars($senior['age']); ?></td>
-                                                    <td><?php echo htmlspecialchars($senior['household_no'] ?? 'N/A'); ?></td>
+                                                    <td><?php echo htmlspecialchars($senior['contact_no'] ?? 'N/A'); ?></td>
+                                                    <td><?php echo htmlspecialchars($senior['gmail'] ?? 'N/A'); ?></td>
+                                                    <td><?php echo htmlspecialchars($senior['family_no'] ?? 'N/A'); ?></td>
+                                                    <td><?php echo htmlspecialchars($senior['household_head'] ?? 'N/A'); ?></td>
                                                     <td>
-                                                        <?php 
-                                                        $relation = $senior['relation_to_head'];
-                                                        $badge_class = '';
-                                                        switch($relation) {
-                                                            case 'Head': $badge_class = 'bg-primary'; break;
-                                                            case 'Spouse': $badge_class = 'bg-success'; break;
-                                                            case 'Son': case 'Daughter': $badge_class = 'bg-info'; break;
-                                                            default: $badge_class = 'bg-secondary';
-                                                        }
-                                                        ?>
-                                                        <span class="badge <?php echo $badge_class; ?>"><?php echo htmlspecialchars($relation); ?></span>
-                                                    </td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#updateSeniorModal">
-                                                            <i class="fas fa-edit"></i> Edit
-                                                        </button>
-                                                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteSeniorModal">
-                                                            <i class="fas fa-trash-alt"></i> Delete
-                                                        </button>
+                                                        <a href="Resident.php" class="btn btn-sm btn-primary" title="View in Residents">
+                                                            <i class="fas fa-eye"></i> View
+                                                        </a>
                                                     </td>
                                                 </tr>
                                             <?php endforeach; ?>

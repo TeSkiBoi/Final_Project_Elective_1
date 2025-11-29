@@ -89,9 +89,9 @@ class Dashboard {
      */
     public function getPopulationByAgeGroup(){
         $query = "SELECT 
-                    SUM(CASE WHEN TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) < 18 THEN 1 ELSE 0 END) as children,
-                    SUM(CASE WHEN TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) BETWEEN 18 AND 59 THEN 1 ELSE 0 END) as adults,
-                    SUM(CASE WHEN TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) >= 60 THEN 1 ELSE 0 END) as seniors
+                    SUM(CASE WHEN age < 18 THEN 1 ELSE 0 END) as children,
+                    SUM(CASE WHEN age BETWEEN 18 AND 59 THEN 1 ELSE 0 END) as adults,
+                    SUM(CASE WHEN age >= 60 THEN 1 ELSE 0 END) as seniors
                   FROM residents";
         $result = $this->connection->query($query);
         if (!$result) {
@@ -107,11 +107,22 @@ class Dashboard {
 
     /**
      * GET GENDER DISTRIBUTION
+     * Note: Gender field removed from new schema, returning household-based stats instead
      */
     public function getGenderDistribution(){
-        $query = "SELECT gender, COUNT(*) as count 
+        // Since gender field no longer exists in new resident schema,
+        // we'll show household distribution as alternative metric
+        $query = "SELECT 
+                    'With Contact' as gender,
+                    COUNT(*) as count 
                   FROM residents 
-                  GROUP BY gender";
+                  WHERE contact_no IS NOT NULL AND contact_no != ''
+                  UNION ALL
+                  SELECT 
+                    'Without Contact' as gender,
+                    COUNT(*) as count 
+                  FROM residents 
+                  WHERE contact_no IS NULL OR contact_no = ''";
         $result = $this->connection->query($query);
         if (!$result) {
             return [];

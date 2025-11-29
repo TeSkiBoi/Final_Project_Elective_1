@@ -141,12 +141,12 @@
                 </div>
             </div>
 
-            <!-- Gender Distribution -->
+            <!-- Contact Information Distribution -->
             <div class="col-xl-6 mb-4">
                 <div class="card shadow">
-                    <div class="card-header bg-success text-white">
-                        <i class="fas fa-chart-doughnut me-2"></i>
-                        <strong>Gender Distribution</strong>
+                    <div class="card-header bg-success">
+                        <i class="fas fa-chart-doughnut me-2 text-white"></i>
+                        <strong class="text-white">Residents Contact Information</strong>
                     </div>
                     <div class="card-body">
                         <canvas id="genderChart" style="max-height: 300px;"></canvas>
@@ -160,9 +160,9 @@
             <!-- Incident Trends -->
             <div class="col-xl-6 mb-4">
                 <div class="card shadow">
-                    <div class="card-header bg-warning text-white">
-                        <i class="fas fa-chart-line me-2"></i>
-                        <strong>Monthly Incident Reports (<?php echo date('Y'); ?>)</strong>
+                    <div class="card-header bg-warning">
+                        <i class="fas fa-chart-line me-2 text-white"></i>
+                        <strong class="text-white">Monthly Incident Reports (<?php echo date('Y'); ?>)</strong>
                     </div>
                     <div class="card-body">
                         <canvas id="incidentTrendsChart"></canvas>
