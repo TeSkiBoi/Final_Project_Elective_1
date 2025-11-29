@@ -20,13 +20,15 @@ class Resident {
     }
 
     public function getAll() {
-        $query = "SELECT r.resident_id, r.household_id, r.first_name, r.middle_name, r.last_name, r.birth_date, r.gender, r.age, r.contact_no, r.email, r.created_at, h.household_id as hh_id 
-                  FROM " . $this->table . " r 
-                  LEFT JOIN households h ON r.household_id = h.household_id 
+        // Align fields with the `residents` schema in barangay_biga_db (5)
+        $query = "SELECT r.resident_id, r.household_id, r.first_name, r.middle_name, r.last_name, r.birth_date, r.age, r.gender, r.contact_no, r.email, h.household_no
+                  FROM " . $this->table . " r
+                  LEFT JOIN households h ON r.household_id = h.household_id
                   ORDER BY r.last_name ASC, r.first_name ASC";
         $result = $this->connection->query($query);
 
-        if (!$result) return false;
+        // Return an empty array instead of false on query failure for consistent return type
+        if (!$result) return [];
 
         $rows = [];
         while ($r = $result->fetch_assoc()) {
@@ -39,28 +41,14 @@ class Resident {
         $query = "SELECT r.*, h.household_id as hh_id FROM " . $this->table . " r LEFT JOIN households h ON r.household_id = h.household_id WHERE r.resident_id = ? LIMIT 1";
         $stmt = $this->connection->prepare($query);
         if (!$stmt) return null;
-        $stmt->bind_param('s', $resident_id);
+        // resident_id is an INT in the DB
+        $stmt->bind_param('i', $resident_id);
         $stmt->execute();
         $res = $stmt->get_result();
         return $res ? $res->fetch_assoc() : null;
     }
 
-    /**
-     * Generate next resident ID (e.g., R001, R002)
-     */
-    public function generateNextId() {
-        $query = "SELECT resident_id FROM " . $this->table . " ORDER BY resident_id DESC LIMIT 1";
-        $result = $this->connection->query($query);
-        
-        if ($result && $result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            $lastId = $row['resident_id'];
-            $number = intval(substr($lastId, 1)) + 1;
-            return 'R' . str_pad($number, 3, '0', STR_PAD_LEFT);
-        }
-        
-        return 'R001';
-    }
+    // Note: resident_id is INT AUTO_INCREMENT in the SQL schema; the database assigns the ID.
 
     public function create($data) {
         try {
@@ -81,7 +69,7 @@ class Resident {
                 }
             }
 
-            $resident_id = $this->generateNextId();
+            // The database auto-generates resident_id (AUTO_INCREMENT)
             $household_id = $data['household_id'];
             $first_name = $data['first_name'];
             $middle_name = $data['middle_name'] ?? null;
@@ -92,7 +80,7 @@ class Resident {
             $contact_no = $data['contact_no'] ?? null;
             $email = $data['email'] ?? null;
 
-            $query = "INSERT INTO " . $this->table . " (resident_id, household_id, first_name, middle_name, last_name, birth_date, gender, age, contact_no, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $query = "INSERT INTO " . $this->table . " (household_id, first_name, middle_name, last_name, birth_date, gender, age, contact_no, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->connection->prepare($query);
             
             if (!$stmt) {
@@ -104,14 +92,16 @@ class Resident {
             }
 
             // Fixed: gender is position 7 (s=string), age is position 8 (i=integer)
-            // Types: resident_id(s), household_id(i), first_name(s), middle_name(s), last_name(s), birth_date(s), gender(s), age(i), contact_no(s), email(s)
-            $stmt->bind_param('sisssssiss', $resident_id, $household_id, $first_name, $middle_name, $last_name, $birth_date, $gender, $age, $contact_no, $email);
+            // Types: household_id(i), first_name(s), middle_name(s), last_name(s), birth_date(s), gender(s), age(i), contact_no(s), email(s)
+            $stmt->bind_param('isssssiss', $household_id, $first_name, $middle_name, $last_name, $birth_date, $gender, $age, $contact_no, $email);
             
             if ($stmt->execute()) {
+                // DB assigns auto increment ID
+                $insertedId = (int) $this->connection->insert_id;
                 return [
                     'success' => true,
                     'message' => 'Resident created successfully!',
-                    'resident_id' => $resident_id
+                    'resident_id' => $insertedId
                 ];
             } else {
                 return [
@@ -165,7 +155,8 @@ class Resident {
 
             // Fixed: gender is position 6 (s=string), age is position 7 (i=integer)
             // Types: household_id(i), first_name(s), middle_name(s), last_name(s), birth_date(s), gender(s), age(i), contact_no(s), email(s), resident_id(s)
-            $stmt->bind_param('isssssisss', $household_id, $first_name, $middle_name, $last_name, $birth_date, $gender, $age, $contact_no, $email, $resident_id);
+            // resident_id is now INT
+            $stmt->bind_param('isssssissi', $household_id, $first_name, $middle_name, $last_name, $birth_date, $gender, $age, $contact_no, $email, $resident_id);
             
             if ($stmt->execute()) {
                 return [
@@ -202,7 +193,7 @@ class Resident {
                 ];
             }
 
-            $stmt->bind_param('s', $resident_id);
+            $stmt->bind_param('i', $resident_id);
             
             if ($stmt->execute()) {
                 return [

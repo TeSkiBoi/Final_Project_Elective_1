@@ -19,11 +19,13 @@ class Household {
      * Get all households
      */
     public function getAll() {
-        $query = "SELECT household_id, family_no, full_name, address, income FROM " . $this->table . " ORDER BY family_no ASC";
+        // Include household_no for views that show 'household_no' in dropdowns / labels
+        $query = "SELECT household_id, household_no, family_no, full_name, address, income FROM " . $this->table . " ORDER BY family_no ASC";
         $result = $this->connection->query($query);
 
+        // Return empty array instead of false so callers can reliably iterate
         if (!$result) {
-            return false;
+            return [];
         }
 
         $rows = [];
@@ -38,7 +40,8 @@ class Household {
      * Get household by ID
      */
     public function getById($household_id) {
-        $query = "SELECT household_id, family_no, full_name, address, income FROM " . $this->table . " WHERE household_id = ? LIMIT 1";
+        // Include household_no for consistency
+        $query = "SELECT household_id, household_no, family_no, full_name, address, income FROM " . $this->table . " WHERE household_id = ? LIMIT 1";
         $stmt = $this->connection->prepare($query);
         if (!$stmt) return null;
         $stmt->bind_param('i', $household_id);

@@ -65,7 +65,7 @@ function handleUpdate() {
         return;
     }
 
-    $resident_id = $data['resident_id'];
+    $resident_id = (int) $data['resident_id'];
     $result = $residentModel->update($resident_id, $data);
     echo json_encode($result);
     exit;
@@ -86,7 +86,7 @@ function handleDelete() {
         return;
     }
 
-    $resident_id = $data['resident_id'];
+    $resident_id = (int) $data['resident_id'];
     $result = $residentModel->delete($resident_id);
     echo json_encode($result);
     exit;
@@ -118,7 +118,7 @@ function handleGetById() {
         return;
     }
 
-    $id = $_GET['id'];
+    $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
     $row = $residentModel->getById($id);
     if ($row) {
         echo json_encode(['success' => true, 'data' => $row]);

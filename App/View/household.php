@@ -675,7 +675,7 @@
                     const isDeleted = form.getAttribute('data-deleted') === 'true';
 
                     if (isDeleted) {
-                        memberOperations.delete.push(residentId);
+                        memberOperations.delete.push(parseInt(residentId));
                     } else {
                         const firstNames = form.querySelectorAll('input[name="existing_member_first_name[]"]');
                         const middleNames = form.querySelectorAll('input[name="existing_member_middle_name[]"]');
@@ -691,7 +691,7 @@
                             const age = ages.length > 0 && ages[0].value ? parseInt(ages[0].value) : calculateAge(birthDate);
                             
                             memberOperations.update.push({
-                                resident_id: residentId,
+                                resident_id: parseInt(residentId),
                                 first_name: firstNames[0].value.trim(),
                                 middle_name: middleNames[0]?.value.trim() || '',
                                 last_name: lastNames[0].value.trim(),
@@ -746,7 +746,7 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            household_id: householdId,
+                            household_id: parseInt(householdId),
                             family_no: parseInt(family_no),
                             full_name: full_name,
                             address: address,
@@ -840,7 +840,7 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            household_id: householdId
+                            household_id: parseInt(householdId)
                         })
                     });
 

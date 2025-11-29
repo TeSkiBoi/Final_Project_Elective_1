@@ -98,7 +98,7 @@ function handleUpdate() {
         return;
     }
 
-    $household_id = $data['household_id'];
+    $household_id = (int) $data['household_id'];
     $family_no = $data['family_no'] ?? 0;
     $full_name = $data['full_name'] ?? '';
     $address = $data['address'] ?? '';
@@ -125,7 +125,7 @@ function handleDelete() {
         return;
     }
 
-    $household_id = $data['household_id'];
+    $household_id = (int) $data['household_id'];
     $result = $householdModel->delete($household_id);
     echo json_encode($result);
 }
@@ -143,7 +143,7 @@ function handleUpdateWithMembers() {
     // Log request for debugging
     error_log('UpdateWithMembers request: ' . json_encode($data));
     
-    $household_id = $data['household_id'] ?? null;
+    $household_id = isset($data['household_id']) ? (int) $data['household_id'] : null;
     $family_no = $data['family_no'] ?? null;
     $full_name = $data['full_name'] ?? null;
     $address = $data['address'] ?? null;
@@ -191,7 +191,7 @@ function handleGetById() {
         return;
     }
 
-    $household_id = $_GET['id'];
+    $household_id = (int) $_GET['id'];
     $row = $householdModel->getById($household_id);
     if ($row) {
         echo json_encode(['success' => true, 'data' => $row]);
@@ -252,7 +252,7 @@ function handleGetMembers() {
         return;
     }
 
-    $household_id = $_GET['household_id'];
+    $household_id = (int) $_GET['household_id'];
     $members = $householdModel->getMembers($household_id);
     echo json_encode(['success' => true, 'data' => $members]);
 }

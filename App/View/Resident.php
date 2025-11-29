@@ -349,7 +349,7 @@
                             age: parseInt(age),
                             contact_no: contact_no || null,
                             email: email || null,
-                            household_id: household_id
+                            household_id: parseInt(household_id)
                         })
                     });
 
@@ -457,7 +457,7 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            resident_id: residentId,
+                            resident_id: parseInt(residentId),
                             first_name: first_name,
                             middle_name: middle_name || null,
                             last_name: last_name,
@@ -466,7 +466,7 @@
                             age: parseInt(age),
                             contact_no: contact_no || null,
                             email: email || null,
-                            household_id: household_id
+                            household_id: parseInt(household_id)
                         })
                     });
 
@@ -519,7 +519,7 @@
                 const residentName = document.getElementById('delete_resident_name').value;
                 const confirmDelete = document.getElementById('confirm_delete_resident').value.trim();
 
-                if (confirmDelete !== residentId) {
+                if (confirmDelete !== residentId.toString()) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Confirmation Failed',
@@ -541,7 +541,7 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            resident_id: residentId
+                            resident_id: parseInt(residentId)
                         })
                     });
 
