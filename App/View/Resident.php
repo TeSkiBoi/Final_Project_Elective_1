@@ -125,7 +125,7 @@
                         <h5 class="modal-title" id="createResidentModalLabel"><i class="fas fa-plus me-2"></i>Create Resident</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form id="createResidentForm">
+                    <form id="createResidentForm" method="POST">
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label for="full_name" class="form-label">Full Name <span class="text-danger">*</span></label>
@@ -153,7 +153,7 @@
                                     <option value="">-- Select Household --</option>
                                     <?php foreach ($households as $household): ?>
                                         <option value="<?php echo $household['household_id']; ?>">
-                                            <?php echo htmlspecialchars($household['household_no'] . ' - ' . $household['address']); ?>
+                                            <?php echo htmlspecialchars($household['household_id']); ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -285,7 +285,7 @@
         <!-- SweetAlert2 CDN -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        <script>
+        <!--<script>
             // API Base URL
             const API_URL = '../../App/Controller/ResidentController.php';
 
@@ -612,6 +612,294 @@
             document.getElementById('deleteResidentModal').addEventListener('hide.bs.modal', function() {
                 document.getElementById('deleteResidentForm').reset();
             });
-        </script>
+        </script>-->
+
+        <script>
+    // API Base URL
+    const API_URL = '../../App/Controller/ResidentController.php';
+
+    /**
+     * Create Resident Form Submission
+     */
+    document.getElementById('createResidentForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const full_name = document.getElementById('full_name').value.trim();
+        const birthdate = document.getElementById('birthdate').value;
+        const gender = document.getElementById('gender').value;
+        const occupation = document.getElementById('occupation').value.trim();
+        const household_id = document.getElementById('household_id').value;
+        const relation_to_head = document.getElementById('relation_to_head').value;
+
+        // Validation
+        if (!full_name || !birthdate || !gender || !household_id) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Validation Error',
+                text: 'Please fill all required fields (Full Name, Birthdate, Gender, Household).',
+                confirmButtonColor: '#6ec207'
+            });
+            return;
+        }
+
+        // Show loading state
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
+
+        try {
+            const response = await fetch(API_URL + '?action=create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    full_name,
+                    birthdate,
+                    gender,
+                    occupation: occupation || null,
+                    household_id: parseInt(household_id),
+                    relation_to_head
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: result.message,
+                    confirmButtonColor: '#6ec207'
+                }).then(() => {
+                    document.getElementById('createResidentForm').reset();
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('createResidentModal'));
+                    modal.hide();
+                    setTimeout(() => location.reload(), 500);
+                });
+            } else {
+                let errorTitle = 'Error';
+                if (result.message.includes('already exists')) errorTitle = 'Duplicate Entry';
+                Swal.fire({
+                    icon: 'error',
+                    title: errorTitle,
+                    text: result.message,
+                    confirmButtonColor: '#dc3545'
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Network Error',
+                text: 'Failed to connect to the server. Please check your connection and try again.',
+                confirmButtonColor: '#dc3545'
+            });
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    });
+
+    /**
+     * Update Resident Form Submission
+     */
+    document.getElementById('updateResidentForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const residentId = document.getElementById('resident_id_edit').value;
+        const full_name = document.getElementById('full_name_edit').value.trim();
+        const birthdate = document.getElementById('birthdate_edit').value;
+        const gender = document.getElementById('gender_edit').value;
+        const occupation = document.getElementById('occupation_edit').value.trim();
+        const household_id = document.getElementById('household_id_edit').value;
+        const relation_to_head = document.getElementById('relation_to_head_edit').value;
+
+        if (!residentId) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Error',
+                text: 'Resident ID is missing.',
+                confirmButtonColor: '#6ec207'
+            });
+            return;
+        }
+
+        if (!full_name || !birthdate || !gender || !household_id) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Validation Error',
+                text: 'Please fill all required fields.',
+                confirmButtonColor: '#6ec207'
+            });
+            return;
+        }
+
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Updating...';
+
+        try {
+            const response = await fetch(API_URL + '?action=update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: parseInt(residentId),
+                    full_name,
+                    birthdate,
+                    gender,
+                    occupation: occupation || null,
+                    household_id: parseInt(household_id),
+                    relation_to_head
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Updated!',
+                    text: result.message,
+                    confirmButtonColor: '#6ec207'
+                }).then(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('updateResidentModal'));
+                    modal.hide();
+                    setTimeout(() => location.reload(), 500);
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Update Failed',
+                    text: result.message,
+                    confirmButtonColor: '#dc3545'
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Network Error',
+                text: 'Failed to connect to the server.',
+                confirmButtonColor: '#dc3545'
+            });
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    });
+
+    /**
+     * Delete Resident Form Submission
+     */
+    document.getElementById('deleteResidentForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const residentId = document.getElementById('delete_resident_id').value;
+        const residentName = document.getElementById('delete_resident_name').value;
+        const confirmDelete = document.getElementById('confirm_delete_resident').value.trim();
+
+        if (confirmDelete !== residentName) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Confirmation Failed',
+                text: 'The name does not match. Please type the correct name.',
+                confirmButtonColor: '#6ec207'
+            });
+            return;
+        }
+
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Deleting...';
+
+        try {
+            const response = await fetch(API_URL + '?action=delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: parseInt(residentId) })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted!',
+                    text: result.message,
+                    confirmButtonColor: '#6ec207'
+                }).then(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('deleteResidentModal'));
+                    modal.hide();
+                    setTimeout(() => location.reload(), 500);
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Deletion Failed',
+                    text: result.message,
+                    confirmButtonColor: '#dc3545'
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Network Error',
+                text: 'Failed to connect to the server.',
+                confirmButtonColor: '#dc3545'
+            });
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    });
+
+    /**
+     * Populate Update & Delete Modals
+     */
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('button[data-bs-target="#updateResidentModal"]')) {
+            const row = e.target.closest('tr');
+            const residentId = row.querySelector('td:nth-child(1)').textContent;
+            const full_name = row.querySelector('td:nth-child(2)').textContent;
+            const birthdate = row.querySelector('td:nth-child(3)').textContent;
+            const gender = row.querySelector('td:nth-child(4)').textContent;
+            const occupation = row.querySelector('td:nth-child(5)').textContent;
+            const household_id = row.dataset.householdId || '';
+            const relation_to_head = row.querySelector('td:nth-child(7)').textContent.trim();
+
+            document.getElementById('resident_id_edit').value = residentId;
+            document.getElementById('resident_id_display').value = residentId;
+            document.getElementById('full_name_edit').value = full_name;
+            document.getElementById('birthdate_edit').value = birthdate;
+            document.getElementById('gender_edit').value = gender;
+            document.getElementById('occupation_edit').value = occupation === 'N/A' ? '' : occupation;
+            document.getElementById('household_id_edit').value = household_id;
+            document.getElementById('relation_to_head_edit').value = relation_to_head;
+        }
+
+        if (e.target.closest('button[data-bs-target="#deleteResidentModal"]')) {
+            const row = e.target.closest('tr');
+            const residentId = row.querySelector('td:nth-child(1)').textContent;
+            const full_name = row.querySelector('td:nth-child(2)').textContent;
+
+            document.getElementById('delete_resident_id').value = residentId;
+            document.getElementById('delete_resident_name').value = full_name;
+            document.getElementById('confirm_delete_resident').value = '';
+        }
+    });
+
+    /**
+     * Reset forms on modal hide
+     */
+    ['createResidentModal', 'updateResidentModal', 'deleteResidentModal'].forEach(id => {
+        document.getElementById(id).addEventListener('hide.bs.modal', function() {
+            this.querySelector('form').reset();
+        });
+    });
+</script>
+
     </body>
 </html>
