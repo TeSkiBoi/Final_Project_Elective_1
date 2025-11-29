@@ -103,7 +103,8 @@ class Resident {
                 ];
             }
 
-            $stmt->bind_param('ssssssisss', $resident_id, $household_id, $first_name, $middle_name, $last_name, $birth_date, $gender, $age, $contact_no, $email);
+            // Fixed: gender is position 7 (s=string), age is position 8 (i=integer)
+            $stmt->bind_param('sssssssiss', $resident_id, $household_id, $first_name, $middle_name, $last_name, $birth_date, $gender, $age, $contact_no, $email);
             
             if ($stmt->execute()) {
                 return [
@@ -161,7 +162,8 @@ class Resident {
                 ];
             }
 
-            $stmt->bind_param('ssssssisss', $household_id, $first_name, $middle_name, $last_name, $birth_date, $gender, $age, $contact_no, $email, $resident_id);
+            // Fixed: gender is position 6 (s=string), age is position 7 (i=integer)
+            $stmt->bind_param('sssssssiss', $household_id, $first_name, $middle_name, $last_name, $birth_date, $gender, $age, $contact_no, $email, $resident_id);
             
             if ($stmt->execute()) {
                 return [
