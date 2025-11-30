@@ -63,19 +63,18 @@ function handleCreate() {
     $data = json_decode(file_get_contents('php://input'), true);
     error_log('Create data: ' . json_encode($data));
 
-    // Required fields: family_no, full_name, address
-    if (empty($data['family_no']) || empty($data['full_name']) || empty($data['address'])) {
+    // Required fields: family_no, address
+    if (empty($data['family_no']) || empty($data['address'])) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Family No, Full Name, and Address are required']);
+        echo json_encode(['success' => false, 'message' => 'Family No and Address are required']);
         return;
     }
 
     $family_no = $data['family_no'];
-    $full_name = $data['full_name'];
     $address = $data['address'];
     $income = $data['income'] ?? 0.00;
 
-    $result = $householdModel->create($family_no, $full_name, $address, $income);
+    $result = $householdModel->create($family_no, $address, $income);
     error_log('Create result: ' . json_encode($result));
     echo json_encode($result);
     exit;
@@ -100,11 +99,11 @@ function handleUpdate() {
 
     $household_id = $data['household_id'];
     $family_no = $data['family_no'] ?? 0;
-    $full_name = $data['full_name'] ?? '';
     $address = $data['address'] ?? '';
     $income = $data['income'] ?? 0.00;
+    $household_head_id = $data['household_head_id'] ?? null;
 
-    $result = $householdModel->update($household_id, $family_no, $full_name, $address, $income);
+    $result = $householdModel->update($household_id, $family_no, $address, $income, $household_head_id);
     echo json_encode($result);
     exit;
 }
@@ -145,17 +144,17 @@ function handleUpdateWithMembers() {
     
     $household_id = $data['household_id'] ?? null;
     $family_no = $data['family_no'] ?? null;
-    $full_name = $data['full_name'] ?? null;
     $address = $data['address'] ?? null;
     $income = $data['income'] ?? 0.00;
+    $household_head_id = $data['household_head_id'] ?? null;
     $memberOperations = $data['memberOperations'] ?? [];
 
-    if (!$household_id || !$family_no || !$full_name || !$address) {
+    if (!$household_id || !$family_no || !$address) {
         echo json_encode(['success' => false, 'message' => 'Missing required fields']);
         return;
     }
 
-    $result = $householdModel->updateWithMembers($household_id, $family_no, $full_name, $address, $income, $memberOperations);
+    $result = $householdModel->updateWithMembers($household_id, $family_no, $address, $income, $household_head_id, $memberOperations);
     
     // Log result for debugging
     error_log('UpdateWithMembers result: ' . json_encode($result));
@@ -215,20 +214,19 @@ function handleCreateWithMembers() {
     // Log request for debugging
     error_log('CreateWithMembers request: ' . json_encode($data));
 
-    // Required fields: family_no, full_name, address
-    if (empty($data['family_no']) || empty($data['full_name']) || empty($data['address'])) {
+    // Required fields: family_no, address
+    if (empty($data['family_no']) || empty($data['address'])) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Family No, Full Name, and Address are required']);
+        echo json_encode(['success' => false, 'message' => 'Family No and Address are required']);
         return;
     }
 
     $family_no = $data['family_no'];
-    $full_name = $data['full_name'];
     $address = $data['address'];
     $income = $data['income'] ?? 0.00;
     $members = $data['members'] ?? [];
 
-    $result = $householdModel->createWithMembers($family_no, $full_name, $address, $income, $members);
+    $result = $householdModel->createWithMembers($family_no, $address, $income, $members);
     
     // Log result for debugging
     error_log('CreateWithMembers result: ' . json_encode($result));

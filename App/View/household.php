@@ -54,7 +54,7 @@
                                         <tr>
                                             <th>Household ID</th>
                                             <th>Family No</th>
-                                            <th>Full Name (Head)</th>
+                                            <th>Household Head</th>
                                             <th>Address</th>
                                             <th>Income</th>
                                             <th>Action</th>
@@ -66,13 +66,13 @@
                                                 <tr>
                                                     <td><?php echo htmlspecialchars($household['household_id']); ?></td>
                                                     <td><?php echo htmlspecialchars($household['family_no']); ?></td>
-                                                    <td><?php echo htmlspecialchars($household['full_name']); ?></td>
+                                                    <td><?php echo htmlspecialchars($household['household_head_name'] ?? 'Not Set'); ?></td>
                                                     <td><?php echo htmlspecialchars($household['address']); ?></td>
                                                     <td><?php echo number_format($household['income'] ?? 0, 2); ?></td>
                                                     <td>
                                                         <button class="btn btn-sm btn-info me-1 view-members-btn" 
                                                                 data-household-id="<?php echo htmlspecialchars($household['household_id']); ?>"
-                                                                data-household-name="<?php echo htmlspecialchars($household['full_name']); ?>"
+                                                                data-household-name="<?php echo htmlspecialchars($household['household_head_name'] ?? 'Not Set'); ?>"
                                                                 title="View Members">
                                                             <i class="fas fa-eye"></i> View
                                                         </button>
@@ -108,7 +108,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="createHouseholdModalLabel"><i class="fas fa-plus me-2"></i>Create Household with Members</h5>
+                        <h5 class="modal-title" id="createHouseholdModalLabel"><i class="fas fa-plus me-2"></i>Create Household</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <form id="createHouseholdForm">
@@ -125,17 +125,13 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="full_name" class="form-label">Full Name (Household Head) <span class="text-danger">*</span></label>
-                                <input type="text" id="full_name" name="full_name" class="form-control" required placeholder="Enter full name of household head">
-                            </div>
-                            <div class="mb-3">
                                 <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
                                 <input type="text" id="address" name="address" class="form-control" required placeholder="Enter complete address">
                             </div>
 
                             <div class="alert alert-info mt-3">
                                 <i class="fas fa-info-circle me-2"></i>
-                                <strong>Note:</strong> After creating the household, you can add members by clicking the "Edit" button.
+                                <strong>Note:</strong> After creating the household, edit it to add members and select a household head.
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -170,8 +166,11 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="full_name_edit" class="form-label">Full Name (Household Head) <span class="text-danger">*</span></label>
-                                <input type="text" id="full_name_edit" name="full_name" class="form-control" required placeholder="Enter full name of household head">
+                                <label for="household_head_edit" class="form-label">Household Head <span class="text-danger">*</span></label>
+                                <select id="household_head_edit" name="household_head" class="form-select" required>
+                                    <option value="">-- Select Household Head --</option>
+                                </select>
+                                <div class="form-text">Add members below, then select who will be the household head.</div>
                             </div>
                             <div class="row">
                                 <div class="col-md-8 mb-3">
@@ -427,10 +426,14 @@
             async function loadExistingMembers(householdId) {
                 const container = document.getElementById('membersContainerEdit');
                 const loading = document.getElementById('loadingMembersEdit');
+                const headDropdown = document.getElementById('household_head_edit');
                 
                 // Show loading
                 loading.style.display = 'block';
                 container.innerHTML = '<div class="text-center py-3" id="loadingMembersEdit"><div class="spinner-border spinner-border-sm text-primary" role="status"><span class="visually-hidden">Loading members...</span></div></div>';
+                
+                // Reset dropdown
+                headDropdown.innerHTML = '<option value="">-- Select Household Head --</option>';
                 
                 try {
                     const response = await fetch(API_URL + `?action=getMembers&household_id=${householdId}`);
@@ -440,6 +443,15 @@
                     container.innerHTML = '';
                     
                     if (result.success && result.data && result.data.length > 0) {
+                        // Populate household head dropdown
+                        result.data.forEach(member => {
+                            const fullName = `${member.first_name} ${member.middle_name ? member.middle_name + ' ' : ''}${member.last_name}`;
+                            const option = document.createElement('option');
+                            option.value = member.resident_id;
+                            option.textContent = fullName;
+                            headDropdown.appendChild(option);
+                        });
+                        
                         result.data.forEach((member, index) => {
                             const memberHtml = `
                                 <div class="member-form border rounded p-3 mb-3" id="edit-member-${member.resident_id}" data-member-type="existing" data-resident-id="${member.resident_id}">
@@ -529,16 +541,15 @@
                 e.preventDefault();
 
                 const family_no = document.getElementById('family_no').value.trim();
-                const full_name = document.getElementById('full_name').value.trim();
                 const address = document.getElementById('address').value.trim();
                 const income = document.getElementById('income').value;
 
                 // Validation
-                if (!family_no || !full_name || !address) {
+                if (!family_no || !address) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Validation Error',
-                        text: 'Please fill all required fields (Family No, Full Name, and Address).',
+                        text: 'Please fill all required fields (Family No and Address).',
                         confirmButtonColor: '#6ec207'
                     });
                     return;
@@ -558,7 +569,6 @@
                         },
                         body: JSON.stringify({
                             family_no: parseInt(family_no),
-                            full_name: full_name,
                             address: address,
                             income: income ? parseFloat(income) : 0.00
                         }),
@@ -637,7 +647,7 @@
 
                 const householdId = document.getElementById('household_id_edit').value;
                 const family_no = document.getElementById('family_no_edit').value.trim();
-                const full_name = document.getElementById('full_name_edit').value.trim();
+                const household_head_id = document.getElementById('household_head_edit').value;
                 const address = document.getElementById('address_edit').value.trim();
                 const income = document.getElementById('income_edit').value;
 
@@ -651,11 +661,11 @@
                     return;
                 }
 
-                if (!family_no || !full_name || !address) {
+                if (!family_no || !household_head_id || !address) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Validation Error',
-                        text: 'Please fill all required fields (Family No, Full Name, and Address).',
+                        text: 'Please fill all required fields (Family No, Household Head, and Address).',
                         confirmButtonColor: '#6ec207'
                     });
                     return;
@@ -748,7 +758,7 @@
                         body: JSON.stringify({
                             household_id: householdId,
                             family_no: parseInt(family_no),
-                            full_name: full_name,
+                            household_head_id: household_head_id,
                             address: address,
                             income: income ? parseFloat(income) : 0.00,
                             memberOperations: memberOperations
@@ -886,24 +896,33 @@
             /**
              * Handle Edit Button Click - Populate Update Modal and Load Members
              */
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', async function(e) {
                 if (e.target.closest('button[data-bs-target="#updateHouseholdModal"]')) {
                     const row = e.target.closest('tr');
                     const householdId = row.querySelector('td:nth-child(1)').textContent;
                     const family_no = row.querySelector('td:nth-child(2)').textContent;
-                    const full_name = row.querySelector('td:nth-child(3)').textContent;
                     const address = row.querySelector('td:nth-child(4)').textContent;
                     const income = row.querySelector('td:nth-child(5)').textContent;
 
                     document.getElementById('household_id_edit').value = householdId;
                     document.getElementById('household_id_display').value = householdId;
                     document.getElementById('family_no_edit').value = family_no;
-                    document.getElementById('full_name_edit').value = full_name;
                     document.getElementById('address_edit').value = address;
                     document.getElementById('income_edit').value = parseFloat(income.replace(/,/g, ''));
                     
-                    // Load existing members
-                    loadExistingMembers(householdId);
+                    // Load existing members (will populate dropdown)
+                    await loadExistingMembers(householdId);
+                    
+                    // Fetch household details to get current household head
+                    try {
+                        const response = await fetch(API_URL + `?action=getById&id=${householdId}`);
+                        const result = await response.json();
+                        if (result.success && result.data.household_head_id) {
+                            document.getElementById('household_head_edit').value = result.data.household_head_id;
+                        }
+                    } catch (error) {
+                        console.error('Error fetching household head:', error);
+                    }
                 }
 
                 if (e.target.closest('button[data-bs-target="#deleteHouseholdModal"]')) {

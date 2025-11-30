@@ -19,7 +19,11 @@ class Household {
      * Get all households
      */
     public function getAll() {
-        $query = "SELECT household_id, family_no, full_name, address, income FROM " . $this->table . " ORDER BY family_no ASC";
+        $query = "SELECT h.household_id, h.family_no, h.address, h.income, h.household_head_id,
+                  CONCAT(r.first_name, ' ', IFNULL(CONCAT(r.middle_name, ' '), ''), r.last_name) as household_head_name
+                  FROM " . $this->table . " h
+                  LEFT JOIN residents r ON h.household_head_id = r.resident_id
+                  ORDER BY h.family_no ASC";
         $result = $this->connection->query($query);
 
         if (!$result) {
@@ -38,7 +42,11 @@ class Household {
      * Get household by ID
      */
     public function getById($household_id) {
-        $query = "SELECT household_id, family_no, full_name, address, income FROM " . $this->table . " WHERE household_id = ? LIMIT 1";
+        $query = "SELECT h.household_id, h.family_no, h.address, h.income, h.household_head_id,
+                  CONCAT(r.first_name, ' ', IFNULL(CONCAT(r.middle_name, ' '), ''), r.last_name) as household_head_name
+                  FROM " . $this->table . " h
+                  LEFT JOIN residents r ON h.household_head_id = r.resident_id
+                  WHERE h.household_id = ? LIMIT 1";
         $stmt = $this->connection->prepare($query);
         if (!$stmt) return null;
         $stmt->bind_param('s', $household_id);
@@ -67,20 +75,20 @@ class Household {
     /**
      * Create household
      */
-    public function create($family_no, $full_name, $address, $income = 0.00) {
+    public function create($family_no, $address, $income = 0.00) {
         try {
             // Validate required fields
-            if (empty($family_no) || empty($full_name) || empty($address)) {
+            if (empty($family_no) || empty($address)) {
                 return [
                     'success' => false,
-                    'message' => 'Family No, Full Name, and Address are required',
+                    'message' => 'Family No and Address are required',
                     'error_type' => 'validation'
                 ];
             }
 
             $household_id = $this->generateNextId();
 
-            $query = "INSERT INTO " . $this->table . " (household_id, family_no, full_name, address, income) VALUES (?, ?, ?, ?, ?)";
+            $query = "INSERT INTO " . $this->table . " (household_id, family_no, address, income) VALUES (?, ?, ?, ?)";
             $stmt = $this->connection->prepare($query);
             
             if (!$stmt) {
@@ -91,7 +99,7 @@ class Household {
                 ];
             }
             
-            $stmt->bind_param('sissd', $household_id, $family_no, $full_name, $address, $income);
+            $stmt->bind_param('sisd', $household_id, $family_no, $address, $income);
             
             if ($stmt->execute()) {
                 return [
@@ -128,7 +136,7 @@ class Household {
     /**
      * Update household
      */
-    public function update($household_id, $family_no, $full_name, $address, $income = 0.00) {
+    public function update($household_id, $family_no, $address, $income = 0.00, $household_head_id = null) {
         try {
             // Validate household exists
             $existing = $this->getById($household_id);
@@ -155,7 +163,7 @@ class Household {
                 ];
             }
 
-            $query = "UPDATE " . $this->table . " SET family_no = ?, full_name = ?, address = ?, income = ? WHERE household_id = ?";
+            $query = "UPDATE " . $this->table . " SET family_no = ?, address = ?, income = ?, household_head_id = ? WHERE household_id = ?";
             $stmt = $this->connection->prepare($query);
             
             if (!$stmt) {
@@ -166,7 +174,7 @@ class Household {
                 ];
             }
             
-            $stmt->bind_param('issds', $family_no, $full_name, $address, $income, $household_id);
+            $stmt->bind_param('isdss', $family_no, $address, $income, $household_head_id, $household_id);
             
             if ($stmt->execute()) {
                 return [
@@ -233,14 +241,14 @@ class Household {
     /**
      * Create household with members in a single transaction
      */
-    public function createWithMembers($family_no, $full_name, $address, $income = 0.00, $members = []) {
+    public function createWithMembers($family_no, $address, $income = 0.00, $members = []) {
         try {
             // Start transaction
             $this->connection->begin_transaction();
 
             // Validate required fields
-            if (empty($family_no) || empty($full_name) || empty($address)) {
-                throw new Exception('Family No, Full Name, and Address are required');
+            if (empty($family_no) || empty($address)) {
+                throw new Exception('Family No and Address are required');
             }
 
             // Check if family_no already exists
@@ -258,14 +266,14 @@ class Household {
             $household_id = $this->generateNextId();
 
             // Insert household
-            $query = "INSERT INTO " . $this->table . " (household_id, family_no, full_name, address, income) VALUES (?, ?, ?, ?, ?)";
+            $query = "INSERT INTO " . $this->table . " (household_id, family_no, address, income) VALUES (?, ?, ?, ?)";
             $stmt = $this->connection->prepare($query);
             
             if (!$stmt) {
                 throw new Exception('Error preparing household statement: ' . $this->connection->error);
             }
             
-            $stmt->bind_param('sissd', $household_id, $family_no, $full_name, $address, $income);
+            $stmt->bind_param('sisd', $household_id, $family_no, $address, $income);
             
             if (!$stmt->execute()) {
                 throw new Exception('Error creating household: ' . $stmt->error);
@@ -367,7 +375,7 @@ class Household {
     /**
      * Update household with member management (add/update/delete members)
      */
-    public function updateWithMembers($household_id, $family_no, $full_name, $address, $income = 0.00, $memberOperations = []) {
+    public function updateWithMembers($household_id, $family_no, $address, $income = 0.00, $household_head_id = null, $memberOperations = []) {
         require_once __DIR__ . '/Resident.php';
         
         try {
@@ -375,7 +383,7 @@ class Household {
             $this->connection->begin_transaction();
 
             // Update household info
-            $updateResult = $this->update($household_id, $family_no, $full_name, $address, $income);
+            $updateResult = $this->update($household_id, $family_no, $address, $income, $household_head_id);
             if (!$updateResult['success']) {
                 throw new Exception($updateResult['message']);
             }

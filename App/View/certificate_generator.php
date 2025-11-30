@@ -4,6 +4,26 @@
         // Access control consistent with other pages
         require_once __DIR__ . '/middleware/ProtectAuth.php';
         require_once __DIR__ . '/middleware/RBACProtect.php';
+        
+        // Load Resident model to fetch registered residents with household info
+        require_once __DIR__ . '/../Model/Resident.php';
+        require_once __DIR__ . '/../Config/Database.php';
+        
+        // Get residents with household address
+        $database = new Database();
+        $connection = $database->connect();
+        $query = "SELECT r.resident_id, r.household_id, r.first_name, r.middle_name, r.last_name, 
+                  r.birth_date, r.gender, r.age, r.contact_no, r.email, h.address 
+                  FROM residents r 
+                  LEFT JOIN households h ON r.household_id = h.household_id 
+                  ORDER BY r.last_name ASC, r.first_name ASC";
+        $result = $connection->query($query);
+        $residents = [];
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $residents[] = $row;
+            }
+        }
 
         include 'template/header.php';
     ?>
@@ -36,17 +56,45 @@
                                     <div class="card-body">
                                         <form id="certForm">
                                             <div class="mb-3">
-                                                <label class="form-label">Full Name</label>
-                                                <input type="text" id="fullName" class="form-control" placeholder="Juan dela Cruz" required>
+                                                <label class="form-label">Select Resident <span class="text-danger">*</span></label>
+                                                <select id="residentSelect" class="form-select" required>
+                                                    <option value=""></option>
+                                                    <?php if ($residents && count($residents) > 0): ?>
+                                                        <?php foreach ($residents as $resident): ?>
+                                                            <?php 
+                                                                $fullName = trim($resident['first_name'] . ' ' . ($resident['middle_name'] ?? '') . ' ' . $resident['last_name']);
+                                                                $address = !empty($resident['address']) ? $resident['address'] : 'Brgy. Biga';
+                                                                $residentData = htmlspecialchars(json_encode([
+                                                                    'id' => $resident['resident_id'],
+                                                                    'name' => $fullName,
+                                                                    'age' => $resident['age'],
+                                                                    'address' => $address
+                                                                ]));
+                                                            ?>
+                                                            <option value="<?php echo htmlspecialchars($resident['resident_id']); ?>" 
+                                                                    data-resident='<?php echo $residentData; ?>'>
+                                                                <?php echo htmlspecialchars($fullName . ' - ' . $resident['resident_id']); ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    <?php else: ?>
+                                                        <option value="" disabled>No residents found. Please add residents first.</option>
+                                                    <?php endif; ?>
+                                                </select>
+                                                <div class="form-text">Only registered residents can generate certificates</div>
                                             </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Age</label>
-                                                <input type="number" id="age" class="form-control" placeholder="30" required>
+                                            
+                                            <!-- Hidden fields auto-populated from resident selection -->
+                                            <input type="hidden" id="residentId" value="">
+                                            <input type="hidden" id="fullName" value="">
+                                            <input type="hidden" id="age" value="">
+                                            <input type="hidden" id="address" value="">
+                                            
+                                            <!-- Display selected resident info -->
+                                            <div id="residentInfo" class="alert alert-info" style="display:none;">
+                                                <strong>Selected Resident:</strong>
+                                                <div id="residentInfoText"></div>
                                             </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Address</label>
-                                                <input type="text" id="address" class="form-control" placeholder="Purok 1, Brgy. Biga" required>
-                                            </div>
+                                            
                                             <div class="mb-3">
                                                 <label class="form-label">Purpose</label>
                                                 <select id="purpose" class="form-select">
@@ -61,8 +109,8 @@
                                                 <input type="date" id="certDate" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
                                             </div>
                                             <div class="d-grid gap-2">
-                                                <button type="button" id="generateBtn" class="btn btn-primary">Generate Preview</button>
-                                                <button type="button" id="printBtn" class="btn btn-success no-print">Print Certificate</button>
+                                                <button type="button" id="generateBtn" class="btn btn-primary" disabled>Generate Preview</button>
+                                                <button type="button" id="printBtn" class="btn btn-success no-print" disabled>Print Certificate</button>
                                             </div>
                                         </form>
                                     </div>
@@ -72,8 +120,10 @@
                                     <div class="card">
                                         <div class="card-header">Notes</div>
                                         <div class="card-body small text-muted">
-                                            - Fill the form then click <strong>Generate Preview</strong> to auto-fill the certificate template.<br>
-                                            - Click <strong>Print Certificate</strong> to open your browser print dialog. Only the certificate area will be printed.
+                                            - <strong>Only registered residents</strong> can generate certificates.<br>
+                                            - Select a resident from the dropdown to auto-fill their information.<br>
+                                            - Click <strong>Generate Preview</strong> to view the certificate template.<br>
+                                            - Click <strong>Print Certificate</strong> to open your browser print dialog.
                                         </div>
                                     </div>
                                 </div>
@@ -130,8 +180,44 @@
             </div>
         </div>
 
+        <?php include 'template/script.php'; ?>
+
+        <!-- jQuery and Select2 JS (load after Bootstrap) -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
         <!-- Page-specific styles and print rules -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <style>
+            /* Select2 Bootstrap 5 Theme Customization */
+            .select2-container--default .select2-selection--single {
+                height: 38px;
+                border: 1px solid #ced4da;
+                border-radius: 0.375rem;
+            }
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                line-height: 36px;
+                color: #212529;
+            }
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: 36px;
+            }
+            .select2-container--default.select2-container--focus .select2-selection--single {
+                border-color: #86b7fe;
+                outline: 0;
+                box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+            }
+            .select2-dropdown {
+                border: 1px solid #ced4da;
+                border-radius: 0.375rem;
+            }
+            .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+                background-color: #0d6efd;
+            }
+            .select2-container {
+                width: 100% !important;
+            }
+            
             /* Global print settings */
             @page { margin: 10mm; }
             html, body { height: auto; margin: 0; padding: 0; background: white; }
@@ -181,6 +267,71 @@
 
         <!-- Page scripts -->
         <script>
+            // Initialize Select2 on page load
+            $(document).ready(function() {
+                $('#residentSelect').select2({
+                    placeholder: '-- Search for a Registered Resident --',
+                    allowClear: true,
+                    width: '100%',
+                    theme: 'default',
+                    language: {
+                        noResults: function() {
+                            return "No residents found. Please add residents first.";
+                        },
+                        searching: function() {
+                            return "Searching...";
+                        }
+                    }
+                });
+                
+                // Handle resident selection using jQuery for Select2 compatibility
+                $('#residentSelect').on('change', function() {
+                    const selectedValue = $(this).val();
+                    const generateBtn = document.getElementById('generateBtn');
+                    const printBtn = document.getElementById('printBtn');
+                    const residentInfo = document.getElementById('residentInfo');
+                    const residentInfoText = document.getElementById('residentInfoText');
+                    
+                    if (selectedValue) {
+                        const selectedOption = this.options[this.selectedIndex];
+                        try {
+                            const residentData = JSON.parse(selectedOption.getAttribute('data-resident'));
+                            
+                            // Populate hidden fields
+                            document.getElementById('residentId').value = residentData.id;
+                            document.getElementById('fullName').value = residentData.name;
+                            document.getElementById('age').value = residentData.age;
+                            document.getElementById('address').value = residentData.address;
+                            
+                            // Show resident info
+                            residentInfoText.innerHTML = `
+                                <strong>Name:</strong> ${residentData.name}<br>
+                                <strong>Age:</strong> ${residentData.age}<br>
+                                <strong>Address:</strong> ${residentData.address}<br>
+                                <strong>ID:</strong> ${residentData.id}
+                            `;
+                            residentInfo.style.display = 'block';
+                            
+                            // Enable buttons
+                            generateBtn.disabled = false;
+                            printBtn.disabled = false;
+                        } catch (e) {
+                            console.error('Error parsing resident data:', e);
+                            alert('Error loading resident data');
+                        }
+                    } else {
+                        // Reset if no resident selected
+                        document.getElementById('residentId').value = '';
+                        document.getElementById('fullName').value = '';
+                        document.getElementById('age').value = '';
+                        document.getElementById('address').value = '';
+                        residentInfo.style.display = 'none';
+                        generateBtn.disabled = true;
+                        printBtn.disabled = true;
+                    }
+                });
+            });
+            
             function formatDate(input) {
                 if (!input) return '';
                 const d = new Date(input);
@@ -189,6 +340,12 @@
             }
 
             function generateCertificate() {
+                const residentId = document.getElementById('residentId').value;
+                if (!residentId) {
+                    alert('Please select a registered resident first.');
+                    return false;
+                }
+                
                 const name = document.getElementById('fullName').value.trim() || '[Full Name]';
                 const age = document.getElementById('age').value.trim() || '[age]';
                 const address = document.getElementById('address').value.trim() || '[address]';
@@ -214,11 +371,19 @@
             }
 
             document.getElementById('generateBtn').addEventListener('click', function() {
+                if (!document.getElementById('residentId').value) {
+                    alert('Please select a registered resident first.');
+                    return;
+                }
                 generateCertificate();
                 document.getElementById('printableArea').scrollIntoView({behavior:'smooth'});
             });
 
             document.getElementById('printBtn').addEventListener('click', function() {
+                if (!document.getElementById('residentId').value) {
+                    alert('Please select a registered resident first.');
+                    return;
+                }
                 generateCertificate();
 
                 // Build minimal print CSS to ensure consistent A4 output in the print window

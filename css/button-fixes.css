@@ -63,3 +63,96 @@ input[type="submit"][disabled] {
 .btn-secondary:hover, .btn-secondary:focus { background-color: #808080 !important; border-color: #808080 !important; color: #fff !important; }
 .btn-danger:hover, .btn-danger:focus { background-color: #808080 !important; border-color: #808080 !important; color: #fff !important; }
 .btn-warning:hover, .btn-warning:focus { background-color: #808080 !important; border-color: #808080 !important; color: #fff !important; }
+
+/* ========================================
+   SIDEBAR NAVIGATION SMOOTH TRANSITIONS
+   ======================================== */
+
+/* Smooth transitions for sidebar navigation links */
+.sb-sidenav .nav-link,
+.sb-sidenav-menu-nested .nav-link {
+  transition: all 0.3s ease-in-out !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Smooth hover effect with slight background change */
+.sb-sidenav .nav-link:hover,
+.sb-sidenav-menu-nested .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  padding-left: 1.2rem !important;
+  transform: translateX(2px);
+}
+
+/* Active link smooth highlight */
+.sb-sidenav .nav-link.active {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-left: 3px solid #fff;
+  transition: all 0.3s ease-in-out !important;
+}
+
+/* Smooth collapse/expand animations for dropdown menus */
+.sb-sidenav .collapse {
+  transition: height 0.35s ease !important;
+}
+
+.sb-sidenav .collapsing {
+  transition: height 0.35s ease !important;
+}
+
+/* Smooth rotation for collapse arrows */
+.sb-sidenav-collapse-arrow {
+  transition: transform 0.3s ease-in-out !important;
+  display: inline-block;
+}
+
+/* Rotate arrow when expanded */
+.sb-sidenav .nav-link[aria-expanded="true"] .sb-sidenav-collapse-arrow i {
+  transform: rotate(180deg);
+  transition: transform 0.3s ease-in-out !important;
+}
+
+/* Smooth icon transitions */
+.sb-nav-link-icon {
+  transition: transform 0.2s ease-in-out !important;
+}
+
+.sb-sidenav .nav-link:hover .sb-nav-link-icon {
+  transform: scale(1.1);
+}
+
+/* Smooth nested menu item transitions */
+.sb-sidenav-menu-nested .nav-link {
+  padding-left: 3rem !important;
+  transition: padding-left 0.3s ease-in-out, background-color 0.3s ease-in-out !important;
+}
+
+.sb-sidenav-menu-nested .nav-link:hover {
+  padding-left: 3.3rem !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Smooth page content transitions when clicking navigation */
+#layoutSidenav_content {
+  transition: opacity 0.2s ease-in-out !important;
+}
+
+/* Fade effect for smoother page transitions */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+main {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+/* Smooth sidebar toggle transitions */
+.sb-sidenav {
+  transition: transform 0.3s ease-in-out !important;
+}
+
+/* Smooth transitions for sidebar menu headings */
+.sb-sidenav-menu-heading {
+  transition: color 0.3s ease-in-out !important;
+}
